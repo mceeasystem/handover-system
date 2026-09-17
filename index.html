@@ -598,6 +598,7 @@ function RecordsPage({ user, classes, classrooms }) {
 
 // ===== CHECK PAGE =====
 function CheckPage({ user, classrooms }) {
+  const [period, setPeriod] = useState('');
   const [roomId, setRoomId] = useState('');
   const [items, setItems] = useState([]);
   const [selections, setSelections] = useState({});
@@ -607,12 +608,16 @@ function CheckPage({ user, classrooms }) {
   const [msg, setMsg] = useState('');
 
   async function loadItems(id) {
-    setRoomId(id); setSelections({}); setItems([]); setSubmitted(false);
+    setRoomId(id); setSelections({}); setItems([]); setSubmitted(false); setMsg('');
     if (!id) return;
     setLoading(true);
     const res = await api('getCheckItems', { classroom_id: id });
     setLoading(false);
     if (res.success) setItems(res.data || []);
+  }
+
+  function selectPeriod(p) {
+    setPeriod(p); setSubmitted(false); setSelections({}); setMsg('');
   }
 
   function select(itemId, status) {
@@ -622,12 +627,15 @@ function CheckPage({ user, classrooms }) {
   const allSelected = items.length > 0 && items.every(i => selections[i.id]);
 
   async function submit() {
+    if (!period) { setMsg('請選擇課前或課後'); return; }
+    if (!roomId) { setMsg('請選擇教室'); return; }
     if (!allSelected) { setMsg('請為所有項目選擇狀態'); return; }
     setLoading(true); setMsg('');
     const res = await api('submitCheckRecord', {
       classroom_id: roomId,
       checked_by: user.id,
       note,
+      period,
       items: items.map(i => ({ item_id: i.id, item_name: i.item_name, status: selections[i.id] }))
     });
     setLoading(false);
@@ -635,17 +643,52 @@ function CheckPage({ user, classrooms }) {
     else setMsg('提交失敗，請重試');
   }
 
+  const periodLabel = period === 'before' ? '課前' : period === 'after' ? '課後' : '';
+
   return React.createElement('div', null,
     React.createElement('div', { className: 'card' },
       React.createElement('div', { className: 'card-header' },
-        React.createElement('span', { className: 'card-title' }, '🏁 課後檢查')
+        React.createElement('span', { className: 'card-title' }, '🏁 課前課後檢查')
       ),
       React.createElement('div', { className: 'card-body' },
         submitted
-          ? React.createElement('div', { className: 'alert alert-success', style: { textAlign: 'center', padding: 24 } }, '✓ 課後檢查已完成提交！')
+          ? React.createElement('div', null,
+              React.createElement('div', { className: 'alert alert-success', style: { textAlign: 'center', padding: 24 } },
+                '✓ ' + periodLabel + '檢查已完成提交！'
+              ),
+              React.createElement('button', {
+                className: 'btn btn-ghost btn-full', style: { marginTop: 12 },
+                onClick: () => { setSubmitted(false); setSelections({}); setNote(''); setPeriod(''); }
+              }, '繼續填寫下一份')
+            )
           : React.createElement('div', null,
             React.createElement('div', { className: 'form-group' },
-              React.createElement('label', null, '選擇教室'),
+              React.createElement('label', null, '選擇時段 *'),
+              React.createElement('div', { className: 'flex gap-2', style: { marginTop: 4 } },
+                React.createElement('button', {
+                  className: 'btn', style: {
+                    flex: 1, justifyContent: 'center', fontSize: 15, fontWeight: 700,
+                    background: period === 'before' ? '#dbeafe' : 'var(--surface)',
+                    color: period === 'before' ? '#1e40af' : 'var(--text-2)',
+                    border: period === 'before' ? '2px solid #1e40af' : '2px solid var(--border)',
+                    padding: '12px'
+                  },
+                  onClick: () => selectPeriod('before')
+                }, '🌅 課前檢查'),
+                React.createElement('button', {
+                  className: 'btn', style: {
+                    flex: 1, justifyContent: 'center', fontSize: 15, fontWeight: 700,
+                    background: period === 'after' ? '#dcfce7' : 'var(--surface)',
+                    color: period === 'after' ? '#16a34a' : 'var(--text-2)',
+                    border: period === 'after' ? '2px solid #16a34a' : '2px solid var(--border)',
+                    padding: '12px'
+                  },
+                  onClick: () => selectPeriod('after')
+                }, '🌇 課後檢查')
+              )
+            ),
+            React.createElement('div', { className: 'form-group' },
+              React.createElement('label', null, '選擇教室 *'),
               React.createElement('select', { value: roomId, onChange: e => loadItems(e.target.value) },
                 React.createElement('option', { value: '' }, '請選擇教室'),
                 classrooms.map(c => React.createElement('option', { key: c.id, value: c.id }, c.name))
@@ -653,13 +696,24 @@ function CheckPage({ user, classrooms }) {
             ),
             loading && React.createElement('div', { className: 'loading' }, React.createElement('span', { className: 'spinner' }), '載入中...'),
             items.length > 0 && React.createElement('div', null,
+              period && React.createElement('div', { style: {
+                background: period === 'before' ? '#dbeafe' : '#dcfce7',
+                color: period === 'before' ? '#1e40af' : '#16a34a',
+                borderRadius: 8, padding: '8px 12px', fontSize: 13, fontWeight: 700, marginBottom: 12
+              }}, period === 'before' ? '🌅 課前檢查模式' : '🌇 課後檢查模式'),
               React.createElement('div', { className: 'divider' }),
               items.map(item =>
                 React.createElement('div', { key: item.id, className: 'check-item' },
                   React.createElement('span', { className: 'check-item-name' }, item.item_name),
                   React.createElement('div', { className: 'check-options' },
-                    React.createElement('button', { className: `check-opt ${selections[item.id] === 'completed' ? 'sel-completed' : ''}`, onClick: () => select(item.id, 'completed') }, '✓ 已完成'),
-                    React.createElement('button', { className: `check-opt ${selections[item.id] === 'ignored' ? 'sel-ignored' : ''}`, onClick: () => select(item.id, 'ignored') }, '⚠ 忽略')
+                    React.createElement('button', {
+                      className: 'check-opt ' + (selections[item.id] === 'completed' ? 'sel-completed' : ''),
+                      onClick: () => select(item.id, 'completed')
+                    }, '✓ 已完成'),
+                    React.createElement('button', {
+                      className: 'check-opt ' + (selections[item.id] === 'ignored' ? 'sel-ignored' : ''),
+                      onClick: () => select(item.id, 'ignored')
+                    }, '⚠ 忽略')
                   )
                 )
               ),
@@ -669,14 +723,17 @@ function CheckPage({ user, classrooms }) {
                 React.createElement('textarea', { value: note, onChange: e => setNote(e.target.value), placeholder: '其他備註事項...' })
               ),
               msg && React.createElement('div', { className: 'alert alert-error' }, msg),
-              React.createElement('button', { className: 'btn btn-primary', onClick: submit, disabled: loading || !allSelected },
-                loading ? '提交中...' : '提交課後檢查'
-              )
+              React.createElement('button', {
+                className: 'btn btn-primary btn-full',
+                onClick: submit,
+                disabled: loading || !allSelected || !period
+              }, loading ? '提交中...' : '提交' + periodLabel + '檢查')
             ),
             roomId && !loading && items.length === 0 && React.createElement('div', { className: 'empty' },
               React.createElement('div', { className: 'empty-icon' }, '📋'),
               React.createElement('p', null, '此教室尚未設定檢查項目，請聯絡管理員')
-            )
+            ),
+            msg && !roomId && React.createElement('div', { className: 'alert alert-error' }, msg)
           )
       )
     )
@@ -831,7 +888,7 @@ function AdminPage({ classes, classrooms, onRefresh }) {
 
     tab === 'checkitems' && React.createElement('div', null,
       React.createElement('div', { className: 'flex justify-between items-center', style: { marginBottom: 12 } },
-        React.createElement('span', { className: 'text-sm text-muted' }, '為各教室設定課後檢查項目'),
+        React.createElement('span', { className: 'text-sm text-muted' }, '為各教室設定課前課後檢查項目'),
         React.createElement('button', { className: 'btn btn-primary', onClick: () => setShowCheckItemForm(true) }, '+ 新增檢查項目')
       ),
       msg && React.createElement('div', { className: 'alert alert-error' }, msg),
@@ -867,7 +924,7 @@ function Dashboard({ user, classes, classrooms }) {
   const [stats, setStats] = useState({ total: 0, open: 0, equipment: 0, resolved: 0 });
 
   useEffect(() => {
-    api('getRecords', {}).then(r => {
+    api('getRecords', { date_from: '2000-01-01' }).then(r => {
       if (r.success && r.data) {
         const d = r.data;
         setStats({
@@ -904,6 +961,132 @@ function Dashboard({ user, classes, classrooms }) {
   );
 }
 
+
+// ===== EXPORT PAGE =====
+function ExportPage({ classes }) {
+  const [filter, setFilter] = useState({
+    date_from: new Date(Date.now() - 30*24*60*60*1000).toISOString().split('T')[0],
+    date_to: new Date().toISOString().split('T')[0],
+    class_id: '',
+    type: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [preview, setPreview] = useState(null);
+  const [msg, setMsg] = useState('');
+
+  const TYPE_LABEL = { abnormal:'課堂異常處理', counseling:'學員學習輔導紀錄', task:'課程交辦事項', log:'課堂狀況記錄', equipment:'設備異常' };
+
+  async function fetchData() {
+    if (!filter.date_from || !filter.date_to) { setMsg('請選擇日期區間'); return; }
+    setLoading(true); setMsg(''); setPreview(null);
+    const res = await api('exportRecords', filter);
+    setLoading(false);
+    if (res.success) {
+      setPreview(res.data);
+      if (res.data.length === 0) setMsg('查無符合條件的記錄');
+    } else {
+      setMsg(res.message || '查詢失敗');
+    }
+  }
+
+  function exportXLS() {
+    if (!preview || preview.length === 0) return;
+
+    const headers = ['日期','類型','班級','教室','內容','狀態','建立者','建立時間','解決者','解決時間','解決方式'];
+    const rows = preview.map(r => headers.map(h => r[h] || ''));
+
+    // 建立 HTML table 格式的 XLS
+    let html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel">';
+    html += '<head><meta charset="UTF-8"><style>td{mso-number-format:"@";}</style></head><body><table>';
+    html += '<tr>' + headers.map(h => `<th style="background:#1e40af;color:#fff;font-weight:bold;padding:6px;">${h}</th>`).join('') + '</tr>';
+    rows.forEach((row, i) => {
+      const bg = i % 2 === 0 ? '#ffffff' : '#f0f4f8';
+      html += '<tr>' + row.map(cell => `<td style="background:${bg};padding:4px;">${cell}</td>`).join('') + '</tr>';
+    });
+    html += '</table></body></html>';
+
+    const blob = new Blob(['﻿' + html], { type: 'application/vnd.ms-excel;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const from = filter.date_from.replace(/-/g,'');
+    const to = filter.date_to.replace(/-/g,'');
+    a.download = `交接記錄_${from}_${to}.xls`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  return React.createElement('div', null,
+    React.createElement('div', { className: 'card' },
+      React.createElement('div', { className: 'card-header' },
+        React.createElement('span', { className: 'card-title' }, '📊 匯出交接記錄')
+      ),
+      React.createElement('div', { className: 'card-body' },
+        React.createElement('div', { className: 'form-group' },
+          React.createElement('label', null, '日期區間 *'),
+          React.createElement('div', { className: 'flex gap-2 items-center', style:{flexWrap:'wrap'} },
+            React.createElement('input', { type:'date', value:filter.date_from, onChange:e=>setFilter(f=>({...f,date_from:e.target.value})), style:{flex:1,minWidth:130} }),
+            React.createElement('span', { className:'text-muted' }, '至'),
+            React.createElement('input', { type:'date', value:filter.date_to, onChange:e=>setFilter(f=>({...f,date_to:e.target.value})), style:{flex:1,minWidth:130} })
+          )
+        ),
+        React.createElement('div', { className: 'grid-2' },
+          React.createElement('div', { className:'form-group' },
+            React.createElement('label', null, '班級'),
+            React.createElement('select', { value:filter.class_id, onChange:e=>setFilter(f=>({...f,class_id:e.target.value})) },
+              React.createElement('option', {value:''}, '全部班級'),
+              classes.map(c => React.createElement('option', {key:c.id, value:c.id}, c.name))
+            )
+          ),
+          React.createElement('div', { className:'form-group' },
+            React.createElement('label', null, '記錄類型'),
+            React.createElement('select', { value:filter.type, onChange:e=>setFilter(f=>({...f,type:e.target.value})) },
+              React.createElement('option', {value:''}, '全部類型'),
+              Object.entries(TYPE_LABEL).map(([k,v]) => React.createElement('option', {key:k, value:k}, v))
+            )
+          )
+        ),
+        msg && React.createElement('div', { className: preview && preview.length === 0 ? 'alert alert-error' : 'alert alert-error' }, msg),
+        React.createElement('div', { className:'flex gap-2', style:{flexWrap:'wrap'} },
+          React.createElement('button', { className:'btn btn-primary', onClick:fetchData, disabled:loading },
+            loading ? React.createElement('span', null, React.createElement('span',{className:'spinner'}), '查詢中...') : '🔍 查詢預覽'
+          ),
+          preview && preview.length > 0 && React.createElement('button', { className:'btn btn-success', onClick:exportXLS },
+            '⬇ 匯出 XLS（' + preview.length + ' 筆）'
+          )
+        )
+      )
+    ),
+
+    preview && preview.length > 0 && React.createElement('div', { className:'card' },
+      React.createElement('div', { className:'card-header' },
+        React.createElement('span', { className:'card-title' }, '預覽（前20筆）'),
+        React.createElement('span', { className:'text-sm text-muted' }, `共 ${preview.length} 筆`)
+      ),
+      React.createElement('div', { style:{overflowX:'auto'} },
+        React.createElement('table', { style:{width:'100%',borderCollapse:'collapse',fontSize:12} },
+          React.createElement('thead', null,
+            React.createElement('tr', { style:{background:'#f0f4f8'} },
+              ['日期','類型','班級','教室','內容','狀態'].map(h =>
+                React.createElement('th', {key:h, style:{padding:'8px 10px',textAlign:'left',fontWeight:700,color:'#475569',borderBottom:'1px solid #e2e8f0',whiteSpace:'nowrap'}}, h)
+              )
+            )
+          ),
+          React.createElement('tbody', null,
+            preview.slice(0,20).map((r,i) =>
+              React.createElement('tr', {key:i, style:{borderBottom:'1px solid #f1f5f9'}},
+                ['日期','類型','班級','教室','內容','狀態'].map(h =>
+                  React.createElement('td', {key:h, style:{padding:'7px 10px',color:'#1e293b',maxWidth:h==='內容'?180:undefined,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:h==='內容'?'nowrap':'nowrap'}}, r[h]||'')
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  );
+}
+
 // ===== MAIN APP =====
 function App() {
   const [user, setUser] = useState(null);
@@ -922,16 +1105,18 @@ function App() {
   if (!user) return React.createElement(Login, { onLogin: u => { setUser(u); setPage('dashboard'); } });
 
   const isAdmin = user.role === 'admin';
+  const canExport = user.role === 'admin' || user.role === 'supervisor';
 
   const navItems = [
     { key: 'dashboard', icon: '🏠', label: '總覽', show: true },
     { key: 'records', icon: '📋', label: '交接', show: true },
-    { key: 'check', icon: '✅', label: '課後檢查', show: true },
+    { key: 'check', icon: '✅', label: '課前課後', show: true },
+    { key: 'export', icon: '📊', label: '匯出', show: canExport },
     { key: 'admin', icon: '⚙️', label: '管理', show: isAdmin },
     { key: 'logout', icon: '🚪', label: '登出', show: true },
   ];
 
-  const titles = { dashboard: '總覽', records: '交接記錄', check: '課後檢查', admin: '系統管理' };
+  const titles = { dashboard: '總覽', records: '交接記錄', check: '課前課後檢查', export: '匯出記錄', admin: '系統管理' };
 
   function handleNav(key) {
     if (key === 'logout') { setUser(null); return; }
@@ -979,6 +1164,7 @@ function App() {
         page === 'dashboard' && React.createElement(Dashboard, { user, classes, classrooms }),
         page === 'records' && React.createElement(RecordsPage, { user, classes, classrooms }),
         page === 'check' && React.createElement(CheckPage, { user, classrooms }),
+        page === 'export' && canExport && React.createElement(ExportPage, { classes }),
         page === 'admin' && isAdmin && React.createElement(AdminPage, { classes, classrooms, onRefresh: loadMeta })
       )
     ),
