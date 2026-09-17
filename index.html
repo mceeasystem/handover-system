@@ -5,119 +5,78 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1e40af">
 <title>多元職能推廣協會交接系統</title>
-<link rel="manifest" href="data:application/json,{}">
 <style>
   :root {
-    --bg: #f0f4f8;
-    --surface: #ffffff;
-    --surface2: #f8fafc;
-    --border: #e2e8f0;
-    --primary: #1e40af;
-    --primary-light: #3b82f6;
-    --primary-pale: #eff6ff;
-    --accent: #0369a1;
-    --text: #1e293b;
-    --text-2: #475569;
-    --text-3: #94a3b8;
-    --danger: #dc2626;
-    --danger-pale: #fef2f2;
-    --success: #16a34a;
-    --success-pale: #f0fdf4;
-    --warning: #d97706;
-    --warning-pale: #fffbeb;
-    --info: #0891b2;
-    --info-pale: #ecfeff;
-    --purple: #7c3aed;
-    --purple-pale: #f5f3ff;
+    --bg: #f0f4f8; --surface: #ffffff; --surface2: #f8fafc; --border: #e2e8f0;
+    --primary: #1e40af; --primary-light: #3b82f6; --primary-pale: #eff6ff;
+    --text: #1e293b; --text-2: #475569; --text-3: #94a3b8;
+    --danger: #dc2626; --danger-pale: #fef2f2;
+    --success: #16a34a; --success-pale: #f0fdf4;
+    --warning: #d97706; --warning-pale: #fffbeb;
+    --info: #0891b2; --info-pale: #ecfeff;
+    --purple: #7c3aed; --purple-pale: #f5f3ff;
     --radius: 10px;
     --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
     --shadow-md: 0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; }
-
-  /* LOGIN */
   .login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #0369a1 100%); }
-  .login-box { background: var(--surface); border-radius: 16px; padding: 40px; width: 100%; max-width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,.2); }
-  .login-logo { text-align: center; margin-bottom: 28px; }
-  .login-logo h1 { font-size: 22px; font-weight: 700; color: var(--primary); margin-top: 8px; }
+  .login-box { background: var(--surface); border-radius: 16px; padding: 32px 28px; width: 100%; max-width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,.2); }
+  .login-logo { text-align: center; margin-bottom: 24px; }
+  .login-logo h1 { font-size: 19px; font-weight: 700; color: var(--primary); margin-top: 8px; }
   .login-logo p { color: var(--text-2); font-size: 13px; margin-top: 4px; }
   .login-icon { width: 56px; height: 56px; background: var(--primary-pale); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 26px; }
-
-  /* FORM */
-  .form-group { margin-bottom: 16px; }
-  .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-2); margin-bottom: 6px; }
-  .form-group input, .form-group select, .form-group textarea {
-    width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: var(--radius);
-    font-size: 14px; color: var(--text); background: var(--surface); transition: border-color .15s;
-    outline: none; font-family: inherit;
-  }
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-2); margin-bottom: 5px; }
+  .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: var(--radius); font-size: 14px; color: var(--text); background: var(--surface); outline: none; font-family: inherit; transition: border-color .15s; }
   .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(59,130,246,.1); }
   .form-group textarea { resize: vertical; min-height: 80px; }
-
-  /* BUTTONS */
-  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: var(--radius); font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all .15s; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: var(--radius); font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all .15s; font-family: inherit; }
   .btn-primary { background: var(--primary); color: #fff; }
   .btn-primary:hover { background: #1d4ed8; }
   .btn-success { background: var(--success); color: #fff; }
   .btn-success:hover { background: #15803d; }
   .btn-danger { background: var(--danger); color: #fff; }
-  .btn-danger:hover { background: #b91c1c; }
   .btn-ghost { background: transparent; color: var(--text-2); border: 1.5px solid var(--border); }
   .btn-ghost:hover { background: var(--bg); }
   .btn-full { width: 100%; justify-content: center; padding: 12px; }
   .btn:disabled { opacity: .5; cursor: not-allowed; }
-
-  /* LAYOUT */
   .app { display: flex; height: 100vh; overflow: hidden; }
   .sidebar { width: 230px; background: var(--primary); display: flex; flex-direction: column; flex-shrink: 0; }
   .sidebar-header { padding: 20px 16px 16px; border-bottom: 1px solid rgba(255,255,255,.1); }
-  .sidebar-header h2 { color: #fff; font-size: 16px; font-weight: 700; }
+  .sidebar-header h2 { color: #fff; font-size: 15px; font-weight: 700; }
   .sidebar-header p { color: rgba(255,255,255,.6); font-size: 12px; margin-top: 2px; }
   .sidebar-nav { flex: 1; padding: 12px 8px; overflow-y: auto; }
-  .nav-section { margin-bottom: 8px; }
-  .nav-section-label { color: rgba(255,255,255,.45); font-size: 11px; font-weight: 700; padding: 4px 8px; letter-spacing: .05em; text-transform: uppercase; }
   .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; color: rgba(255,255,255,.8); cursor: pointer; font-size: 14px; transition: all .15s; margin-bottom: 2px; }
   .nav-item:hover { background: rgba(255,255,255,.1); color: #fff; }
   .nav-item.active { background: rgba(255,255,255,.18); color: #fff; font-weight: 600; }
-  .nav-item .nav-icon { font-size: 17px; width: 20px; text-align: center; }
+  .nav-icon { font-size: 17px; width: 20px; text-align: center; }
   .sidebar-footer { padding: 12px 8px; border-top: 1px solid rgba(255,255,255,.1); }
   .user-info { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; }
   .user-avatar { width: 32px; height: 32px; background: rgba(255,255,255,.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; font-weight: 700; flex-shrink: 0; }
-  .user-name { color: #fff; font-size: 13px; font-weight: 600; }
+  .user-name { color: #fff; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
   .user-role { color: rgba(255,255,255,.55); font-size: 11px; }
-
-  /* MAIN */
   .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-  .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; box-shadow: var(--shadow); }
-  .topbar h1 { font-size: 18px; font-weight: 700; color: var(--text); }
-  .content { flex: 1; overflow-y: auto; padding: 24px; }
-
-  /* CARDS */
-  .card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); margin-bottom: 16px; }
-  .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-  .card-title { font-size: 15px; font-weight: 700; color: var(--text); }
-  .card-body { padding: 20px; }
-
-  /* FILTERS */
-  .filter-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
-  .filter-bar select, .filter-bar input { padding: 8px 12px; border: 1.5px solid var(--border); border-radius: var(--radius); font-size: 13px; color: var(--text); background: var(--surface); outline: none; }
-  .filter-bar select:focus, .filter-bar input:focus { border-color: var(--primary-light); }
-
-  /* RECORD LIST */
+  .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; box-shadow: var(--shadow); }
+  .topbar h1 { font-size: 17px; font-weight: 700; }
+  .content { flex: 1; overflow-y: auto; padding: 16px; }
+  .card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); margin-bottom: 14px; }
+  .card-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-size: 15px; font-weight: 700; }
+  .card-body { padding: 18px; }
+  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .filter-bar select, .filter-bar input { padding: 8px 10px; border: 1.5px solid var(--border); border-radius: var(--radius); font-size: 13px; color: var(--text); background: var(--surface); outline: none; }
   .record-list { display: flex; flex-direction: column; gap: 10px; }
-  .record-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); transition: box-shadow .15s; cursor: pointer; }
+  .record-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow); cursor: pointer; transition: box-shadow .15s; }
   .record-card:hover { box-shadow: var(--shadow-md); }
   .record-card.resolved { opacity: .65; }
-  .record-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
-  .record-title { font-size: 14px; font-weight: 600; color: var(--text); flex: 1; line-height: 1.4; }
-  .record-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
-  .meta-tag { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
-  .record-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .record-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+  .record-title { font-size: 14px; font-weight: 600; flex: 1; line-height: 1.4; }
+  .record-meta { display: flex; gap: 6px; flex-wrap: wrap; }
+  .record-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
   .record-time { font-size: 12px; color: var(--text-3); }
-
-  /* BADGES */
-  .badge { font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 700; display: inline-block; }
+  .badge { font-size: 11px; padding: 3px 8px; border-radius: 20px; font-weight: 700; display: inline-block; }
   .badge-abnormal { background: var(--danger-pale); color: var(--danger); }
   .badge-counseling { background: var(--purple-pale); color: var(--purple); }
   .badge-task { background: var(--warning-pale); color: var(--warning); }
@@ -125,105 +84,74 @@
   .badge-equipment { background: var(--info-pale); color: var(--info); }
   .badge-open { background: var(--warning-pale); color: var(--warning); }
   .badge-resolved { background: var(--success-pale); color: var(--success); }
-
-  /* MODAL */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
-  .modal { background: var(--surface); border-radius: 14px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.2); }
-  .modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--surface); z-index: 1; }
-  .modal-title { font-size: 17px; font-weight: 700; }
-  .modal-body { padding: 20px 24px; }
-  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: flex; align-items: flex-end; justify-content: center; z-index: 100; padding: 0; }
+  .modal { background: var(--surface); border-radius: 20px 20px 0 0; width: 100%; max-width: 100%; max-height: 92vh; overflow-y: auto; box-shadow: 0 -4px 30px rgba(0,0,0,.15); }
+  .modal-header { padding: 18px 20px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--surface); z-index: 1; }
+  .modal-title { font-size: 16px; font-weight: 700; }
+  .modal-body { padding: 18px 20px; }
+  .modal-footer { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
   .close-btn { width: 32px; height: 32px; border-radius: 8px; border: none; background: var(--bg); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; color: var(--text-2); }
-  .close-btn:hover { background: var(--border); }
-
-  /* STATS */
-  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 20px; }
-  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow); }
-  .stat-value { font-size: 28px; font-weight: 800; color: var(--primary); }
-  .stat-label { font-size: 12px; color: var(--text-2); margin-top: 3px; font-weight: 600; }
-
-  /* CHECK LIST */
-  .check-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); }
+  .stat-value { font-size: 26px; font-weight: 800; }
+  .stat-label { font-size: 12px; color: var(--text-2); margin-top: 2px; font-weight: 600; }
+  .check-item { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--border); }
   .check-item:last-child { border-bottom: none; }
   .check-item-name { flex: 1; font-size: 14px; }
-  .check-options { display: flex; gap: 8px; }
-  .check-opt { padding: 5px 12px; border-radius: 20px; border: 1.5px solid var(--border); font-size: 12px; font-weight: 600; cursor: pointer; transition: all .15s; background: var(--surface); color: var(--text-2); }
+  .check-options { display: flex; gap: 6px; }
+  .check-opt { padding: 5px 10px; border-radius: 20px; border: 1.5px solid var(--border); font-size: 12px; font-weight: 600; cursor: pointer; transition: all .15s; background: var(--surface); color: var(--text-2); }
   .check-opt.sel-completed { border-color: var(--success); background: var(--success-pale); color: var(--success); }
   .check-opt.sel-ignored { border-color: var(--warning); background: var(--warning-pale); color: var(--warning); }
-
-  /* TABS */
-  .tabs { display: flex; gap: 4px; margin-bottom: 16px; background: var(--surface2); padding: 4px; border-radius: var(--radius); border: 1px solid var(--border); width: fit-content; }
-  .tab { padding: 7px 16px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-2); transition: all .15s; border: none; background: none; }
+  .tabs { display: flex; gap: 3px; margin-bottom: 14px; background: var(--surface2); padding: 4px; border-radius: var(--radius); border: 1px solid var(--border); width: 100%; overflow-x: auto; }
+  .tab { padding: 7px 14px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-2); transition: all .15s; border: none; background: none; white-space: nowrap; flex: 1; text-align: center; }
   .tab.active { background: var(--surface); color: var(--primary); box-shadow: var(--shadow); }
-
-  /* EMPTY */
-  .empty { text-align: center; padding: 48px 20px; color: var(--text-3); }
-  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty { text-align: center; padding: 40px 20px; color: var(--text-3); }
+  .empty-icon { font-size: 36px; margin-bottom: 10px; }
   .empty p { font-size: 14px; }
-
-  /* LOADING */
-  .loading { text-align: center; padding: 32px; color: var(--text-3); font-size: 14px; }
-  .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin .7s linear infinite; margin-right: 8px; vertical-align: middle; }
+  .loading { text-align: center; padding: 28px; color: var(--text-3); font-size: 14px; }
+  .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin .7s linear infinite; margin-right: 6px; vertical-align: middle; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ALERT */
-  .alert { padding: 12px 16px; border-radius: var(--radius); font-size: 13px; margin-bottom: 14px; font-weight: 500; }
+  .alert { padding: 11px 14px; border-radius: var(--radius); font-size: 13px; margin-bottom: 12px; font-weight: 500; }
   .alert-error { background: var(--danger-pale); color: var(--danger); border: 1px solid #fecaca; }
   .alert-success { background: var(--success-pale); color: var(--success); border: 1px solid #bbf7d0; }
-
-  /* DIVIDER */
-  .divider { height: 1px; background: var(--border); margin: 16px 0; }
-
-  /* RESOLVE SECTION */
-  .resolve-box { background: var(--success-pale); border: 1px solid #bbf7d0; border-radius: var(--radius); padding: 14px; margin-top: 12px; }
-  .resolve-box p { font-size: 13px; color: var(--success); font-weight: 600; margin-bottom: 6px; }
-  .resolve-box span { font-size: 12px; color: var(--text-2); }
-
-  /* MOBILE FIRST */
-  .sidebar { display: none; }
-  .bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); z-index: 50; box-shadow: 0 -2px 12px rgba(0,0,0,.08); }
-  .bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 4px 10px; cursor: pointer; color: var(--text-3); font-size: 10px; font-weight: 600; gap: 3px; transition: color .15s; border: none; background: none; }
-  .bottom-nav-item.active { color: var(--primary); }
-  .bottom-nav-item .bnav-icon { font-size: 22px; line-height: 1; }
-  .main { padding-bottom: 68px; }
-  .content { padding: 14px; }
-  .stats-grid { grid-template-columns: 1fr 1fr; }
-  .topbar { padding: 12px 16px; }
-  .topbar h1 { font-size: 16px; }
-  .grid-2 { grid-template-columns: 1fr; }
-  .modal { border-radius: 20px 20px 0 0; position: fixed; bottom: 0; left: 0; right: 0; max-width: 100%; max-height: 92vh; margin: 0; }
-  .modal-overlay { align-items: flex-end; padding: 0; }
-  .filter-bar { flex-direction: column; }
-  .filter-bar select, .filter-bar input { width: 100%; }
-  .tabs { width: 100%; }
-  .tab { flex: 1; text-align: center; }
-  .login-box { border-radius: 0; min-height: 100vh; max-width: 100%; display: flex; flex-direction: column; justify-content: center; padding: 32px 24px; }
-  .login-logo h1 { font-size: 19px; }
-  @media (min-width: 768px) {
-    .sidebar { display: flex; }
-    .bottom-nav { display: none; }
-    .main { padding-bottom: 0; }
-    .content { padding: 24px; }
-    .grid-2 { grid-template-columns: 1fr 1fr; }
-    .modal { position: relative; border-radius: 14px; max-width: 520px; margin: auto; }
-    .modal-overlay { align-items: center; padding: 20px; }
-    .filter-bar { flex-direction: row; }
-    .filter-bar select, .filter-bar input { width: auto; }
-    .tabs { width: fit-content; }
-    .tab { flex: none; }
-    .login-box { border-radius: 16px; min-height: auto; max-width: 380px; padding: 40px; }
-  }
-
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .alert-info { background: var(--info-pale); color: var(--info); border: 1px solid #a5f3fc; }
+  .divider { height: 1px; background: var(--border); margin: 14px 0; }
+  .resolve-box { background: var(--success-pale); border: 1px solid #bbf7d0; border-radius: var(--radius); padding: 12px; margin-top: 10px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .text-sm { font-size: 13px; }
   .text-muted { color: var(--text-2); }
   .mt-2 { margin-top: 8px; }
-  .mt-3 { margin-top: 12px; }
   .flex { display: flex; }
   .gap-2 { gap: 8px; }
   .items-center { align-items: center; }
   .justify-between { justify-content: space-between; }
   .flex-wrap { flex-wrap: wrap; }
+  /* BOTTOM NAV */
+  .sidebar { display: none; }
+  .bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); z-index: 50; box-shadow: 0 -2px 12px rgba(0,0,0,.08); }
+  .bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 7px 2px 9px; cursor: pointer; color: var(--text-3); font-size: 10px; font-weight: 600; gap: 2px; border: none; background: none; font-family: inherit; }
+  .bottom-nav-item.active { color: var(--primary); }
+  .bnav-icon { font-size: 20px; line-height: 1; }
+  .main { padding-bottom: 65px; }
+  .login-box { border-radius: 0; min-height: 100vh; max-width: 100%; display: flex; flex-direction: column; justify-content: center; }
+  /* ANNOUNCE */
+  .announce-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; z-index: 200; padding: 20px; }
+  .announce-box { background: var(--surface); border-radius: 16px; width: 100%; max-width: 420px; padding: 28px 24px; box-shadow: 0 20px 60px rgba(0,0,0,.3); text-align: center; }
+  .announce-icon { font-size: 40px; margin-bottom: 12px; }
+  .announce-title { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: var(--primary); }
+  .announce-content { font-size: 14px; color: var(--text-2); line-height: 1.7; margin-bottom: 20px; white-space: pre-wrap; }
+  .announce-step { font-size: 12px; color: var(--text-3); margin-bottom: 14px; }
+  @media (min-width: 768px) {
+    .sidebar { display: flex; }
+    .bottom-nav { display: none; }
+    .main { padding-bottom: 0; }
+    .content { padding: 22px; }
+    .modal { border-radius: 14px; max-width: 520px; position: relative; }
+    .modal-overlay { align-items: center; padding: 20px; }
+    .login-box { border-radius: 16px; min-height: auto; max-width: 380px; }
+    .tabs { width: fit-content; }
+    .tab { flex: none; }
+  }
 </style>
 </head>
 <body>
@@ -232,25 +160,20 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script>
 const { useState, useEffect, useCallback, useRef } = React;
-
 const API_URL = 'https://script.google.com/macros/s/AKfycbz1VaAERYmg-QnjIalaHKZUGwXnJcD9xsU8JGIXbUi3bBRhKcef-zM5jHe7Eu_DjoDv-g/exec';
 
 async function api(action, body = {}) {
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    body: JSON.stringify({ action, ...body }),
-  });
+  const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action, ...body }) });
   return res.json();
 }
 
 const TYPE_MAP = {
-  abnormal: { label: '課堂異常', badge: 'badge-abnormal', icon: '🚨' },
+  abnormal:   { label: '課堂異常', badge: 'badge-abnormal', icon: '🚨' },
   counseling: { label: '學員輔導', badge: 'badge-counseling', icon: '📚' },
-  task: { label: '課程交辦', badge: 'badge-task', icon: '📋' },
-  log: { label: '課堂記錄', badge: 'badge-log', icon: '📝' },
-  equipment: { label: '設備異常', badge: 'badge-equipment', icon: '🔧' },
+  task:       { label: '課程交辦', badge: 'badge-task', icon: '📋' },
+  log:        { label: '課堂記錄', badge: 'badge-log', icon: '📝' },
+  equipment:  { label: '設備異常', badge: 'badge-equipment', icon: '🔧' },
 };
-
 const ROLE_MAP = { admin: '系統管理員', supervisor: '主管', assistant: '助教', maintenance: '維護人員' };
 
 function fmtDate(s) {
@@ -259,117 +182,145 @@ function fmtDate(s) {
   return isNaN(d) ? s : d.toLocaleString('zh-TW', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
 }
 
+function canManage(role) { return role === 'admin' || role === 'supervisor'; }
+
+// ===== 公告彈窗 =====
+function AnnouncementModal({ announcements, user, onDone }) {
+  const pending = announcements.filter(a => {
+    const c = (a.confirms || []).find(c => c.user_id === user.id);
+    return !c || !c.acknowledged_at;
+  });
+  const [idx, setIdx] = useState(0);
+  const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  if (pending.length === 0 || idx >= pending.length) { onDone(); return null; }
+  const current = pending[idx];
+  const confirmed = (current.confirms || []).find(c => c.user_id === user.id && c.confirmed_at);
+
+  async function handleConfirm() {
+    setLoading(true);
+    await api('confirmAnnouncement', { announcement_id: current.id, user_id: user.id });
+    setLoading(false);
+    setStep(2);
+  }
+
+  async function handleAcknowledge() {
+    setLoading(true);
+    await api('acknowledgeAnnouncement', { announcement_id: current.id, user_id: user.id });
+    setLoading(false);
+    if (idx + 1 >= pending.length) onDone();
+    else { setIdx(i => i + 1); setStep(1); }
+  }
+
+  return React.createElement('div', { className: 'announce-overlay' },
+    React.createElement('div', { className: 'announce-box' },
+      React.createElement('div', { className: 'announce-icon' }, '📢'),
+      React.createElement('div', { className: 'announce-title' }, current.title),
+      React.createElement('div', { className: 'announce-content' }, current.content),
+      React.createElement('div', { className: 'announce-step' },
+        pending.length > 1 ? `公告 ${idx+1} / ${pending.length}` : '',
+        step === 1 ? ' 步驟 1/2：請確認收到此公告' : ' 步驟 2/2：請點擊知悉完成確認'
+      ),
+      step === 1
+        ? React.createElement('button', { className: 'btn btn-primary btn-full', onClick: handleConfirm, disabled: loading },
+            loading ? '處理中...' : '✓ 確認收到'
+          )
+        : React.createElement('button', { className: 'btn btn-success btn-full', onClick: handleAcknowledge, disabled: loading },
+            loading ? '處理中...' : '👍 知悉'
+          )
+    )
+  );
+}
+
 // ===== LOGIN =====
 function Login({ onLogin }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState(() => localStorage.getItem('saved_email') || '');
+  const [password, setPassword] = useState(() => localStorage.getItem('saved_pw') || '');
+  const [remember, setRemember] = useState(() => !!localStorage.getItem('saved_email'));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [mode, setMode] = useState('login'); // 'login' | 'forgot'
+  const [showForgot, setShowForgot] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
   const [forgotMsg, setForgotMsg] = useState('');
   const [forgotError, setForgotError] = useState('');
-  const [forgotLoading, setForgotLoading] = useState(false);
 
   async function handleLogin() {
     if (!email || !password) { setError('請輸入帳號與密碼'); return; }
     setLoading(true); setError('');
     const res = await api('login', { email, password });
     setLoading(false);
-    if (res.success) onLogin(res.user);
-    else setError(res.message || '登入失敗');
+    if (res.success) {
+      if (remember) { localStorage.setItem('saved_email', email); localStorage.setItem('saved_pw', password); }
+      else { localStorage.removeItem('saved_email'); localStorage.removeItem('saved_pw'); }
+      onLogin(res.user);
+    } else setError(res.message || '登入失敗');
   }
 
   async function handleForgot() {
-    if (!forgotEmail) { setForgotError('請輸入您的 Email'); return; }
+    if (!forgotEmail) { setForgotError('請輸入 Email'); return; }
     setForgotLoading(true); setForgotError(''); setForgotMsg('');
     const res = await api('forgotPassword', { email: forgotEmail });
     setForgotLoading(false);
     if (res.success) setForgotMsg(res.message);
-    else setForgotError(res.message || '發送失敗，請稍後再試');
+    else setForgotError(res.message || '發送失敗');
   }
 
-  function switchToForgot() {
-    setForgotEmail(email);
-    setForgotMsg(''); setForgotError('');
-    setMode('forgot');
-  }
-
-  if (mode === 'forgot') return (
-    React.createElement('div', { className: 'login-wrap' },
-      React.createElement('div', { className: 'login-box' },
-        React.createElement('div', { className: 'login-logo' },
-          React.createElement('div', { className: 'login-icon' }, '🔑'),
-          React.createElement('h1', null, '重設密碼'),
-          React.createElement('p', null, '多元職能推廣協會交接系統')
-        ),
-        forgotMsg
-          ? React.createElement('div', null,
-              React.createElement('div', { className: 'alert alert-success' }, '✓ ' + forgotMsg),
-              React.createElement('p', { className: 'text-sm text-muted', style: { marginBottom: 16, lineHeight: 1.6 } },
-                '請檢查您的信箱，使用臨時密碼登入後，請立即更改密碼。'
-              ),
-              React.createElement('button', { className: 'btn btn-primary btn-full', onClick: () => { setMode('login'); setForgotMsg(''); } }, '← 返回登入')
+  return React.createElement('div', { className: 'login-wrap' },
+    React.createElement('div', { className: 'login-box' },
+      React.createElement('div', { className: 'login-logo' },
+        React.createElement('div', { className: 'login-icon' }, '🏫'),
+        React.createElement('h1', null, '多元職能推廣協會交接系統'),
+        React.createElement('p', null, '工作人員交接平台')
+      ),
+      !showForgot
+        ? React.createElement('div', null,
+            error && React.createElement('div', { className: 'alert alert-error' }, error),
+            React.createElement('div', { className: 'form-group' },
+              React.createElement('label', null, 'Email'),
+              React.createElement('input', { type: 'email', value: email, onChange: e => setEmail(e.target.value), placeholder: 'yourname@example.com', onKeyDown: e => e.key === 'Enter' && handleLogin() })
+            ),
+            React.createElement('div', { className: 'form-group' },
+              React.createElement('label', null, '密碼'),
+              React.createElement('input', { type: 'password', value: password, onChange: e => setPassword(e.target.value), onKeyDown: e => e.key === 'Enter' && handleLogin() })
+            ),
+            React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 } },
+              React.createElement('input', { type: 'checkbox', id: 'remember', checked: remember, onChange: e => setRemember(e.target.checked), style: { width: 16, height: 16, cursor: 'pointer' } }),
+              React.createElement('label', { htmlFor: 'remember', style: { fontSize: 13, color: 'var(--text-2)', cursor: 'pointer' } }, '記住我的帳號密碼')
+            ),
+            React.createElement('button', { className: 'btn btn-primary btn-full', onClick: handleLogin, disabled: loading },
+              loading ? React.createElement('span', null, React.createElement('span', { className: 'spinner' }), '登入中...') : '登入'
+            ),
+            React.createElement('div', { style: { textAlign: 'center', marginTop: 14 } },
+              React.createElement('button', { style: { background: 'none', border: 'none', color: '#3b82f6', fontSize: 13, cursor: 'pointer', textDecoration: 'underline' }, onClick: () => { setShowForgot(true); setForgotEmail(email); setForgotMsg(''); setForgotError(''); } }, '忘記密碼？')
             )
-          : React.createElement('div', null,
-              React.createElement('p', { className: 'text-sm text-muted', style: { marginBottom: 16, lineHeight: 1.6 } },
-                '請輸入您的帳號 Email，系統將寄送臨時密碼到您的信箱。'
-              ),
-              forgotError && React.createElement('div', { className: 'alert alert-error' }, forgotError),
-              React.createElement('div', { className: 'form-group' },
-                React.createElement('label', null, 'Email'),
-                React.createElement('input', {
-                  type: 'email', value: forgotEmail,
-                  onChange: e => setForgotEmail(e.target.value),
-                  placeholder: '請輸入帳號 Email',
-                  onKeyDown: e => e.key === 'Enter' && handleForgot()
-                })
-              ),
-              React.createElement('button', {
-                className: 'btn btn-primary btn-full',
-                onClick: handleForgot,
-                disabled: forgotLoading
-              }, forgotLoading
-                ? React.createElement('span', null, React.createElement('span', { className: 'spinner' }), '寄送中...')
-                : '寄送臨時密碼'
-              ),
-              React.createElement('button', {
-                className: 'btn btn-ghost btn-full',
-                style: { marginTop: 10 },
-                onClick: () => setMode('login')
-              }, '← 返回登入')
-            )
-      )
-    )
-  );
-
-  return (
-    React.createElement('div', { className: 'login-wrap' },
-      React.createElement('div', { className: 'login-box' },
-        React.createElement('div', { className: 'login-logo' },
-          React.createElement('div', { className: 'login-icon' }, '🏫'),
-          React.createElement('h1', null, '多元職能推廣協會交接系統'),
-          React.createElement('p', null, '工作人員交接平台')
-        ),
-        error && React.createElement('div', { className: 'alert alert-error' }, error),
-        React.createElement('div', { className: 'form-group' },
-          React.createElement('label', null, 'Email'),
-          React.createElement('input', { type: 'email', value: email, onChange: e => setEmail(e.target.value), placeholder: '請輸入 Email', onKeyDown: e => e.key === 'Enter' && handleLogin() })
-        ),
-        React.createElement('div', { className: 'form-group' },
-          React.createElement('label', null, '密碼'),
-          React.createElement('input', { type: 'password', value: password, onChange: e => setPassword(e.target.value), onKeyDown: e => e.key === 'Enter' && handleLogin() })
-        ),
-        React.createElement('div', { style: { textAlign: 'right', marginBottom: 16, marginTop: -8 } },
-          React.createElement('span', {
-            style: { fontSize: 13, color: 'var(--primary)', cursor: 'pointer', fontWeight: 600 },
-            onClick: switchToForgot
-          }, '忘記密碼？')
-        ),
-        React.createElement('button', { className: 'btn btn-primary btn-full', onClick: handleLogin, disabled: loading },
-          loading ? React.createElement('span', null, React.createElement('span', { className: 'spinner' }), '登入中...') : '登入'
-        )
-      )
+          )
+        : React.createElement('div', null,
+            React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 } },
+              React.createElement('button', { style: { background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: '#475569', padding: 0 }, onClick: () => setShowForgot(false) }, '←'),
+              React.createElement('span', { style: { fontWeight: 700, fontSize: 16 } }, '忘記密碼')
+            ),
+            React.createElement('p', { style: { fontSize: 13, color: '#475569', marginBottom: 14, lineHeight: 1.6 } }, '請輸入您的帳號 Email，系統將發送臨時密碼至您的信箱。'),
+            forgotMsg
+              ? React.createElement('div', null,
+                  React.createElement('div', { className: 'alert alert-success' }, '✓ ' + forgotMsg),
+                  React.createElement('button', { className: 'btn btn-primary btn-full', style: { marginTop: 12 }, onClick: () => setShowForgot(false) }, '返回登入')
+                )
+              : React.createElement('div', null,
+                  forgotError && React.createElement('div', { className: 'alert alert-error' }, forgotError),
+                  React.createElement('div', { className: 'form-group' },
+                    React.createElement('label', null, 'Email'),
+                    React.createElement('input', { type: 'email', value: forgotEmail, onChange: e => setForgotEmail(e.target.value), placeholder: 'yourname@example.com', onKeyDown: e => e.key === 'Enter' && handleForgot() })
+                  ),
+                  React.createElement('button', { className: 'btn btn-primary btn-full', onClick: handleForgot, disabled: forgotLoading },
+                    forgotLoading ? React.createElement('span', null, React.createElement('span', { className: 'spinner' }), '發送中...') : '發送臨時密碼'
+                  ),
+                  React.createElement('div', { style: { textAlign: 'center', marginTop: 12 } },
+                    React.createElement('button', { style: { background: 'none', border: 'none', color: '#475569', fontSize: 13, cursor: 'pointer' }, onClick: () => setShowForgot(false) }, '返回登入')
+                  )
+                )
+          )
     )
   );
 }
@@ -390,10 +341,9 @@ function Modal({ title, onClose, children, footer }) {
 
 // ===== RECORD FORM =====
 function RecordForm({ classes, classrooms, user, onSubmit, onClose }) {
-  const [form, setForm] = useState({ type: 'abnormal', class_id: '', classroom_id: '', date: new Date().toISOString().split('T')[0], description: '', notify_target: '' });
+  const [form, setForm] = useState({ type: 'abnormal', class_id: '', classroom_id: '', date: new Date().toISOString().split('T')[0], execute_date: '', description: '', notify_target: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   async function submit() {
@@ -409,8 +359,7 @@ function RecordForm({ classes, classrooms, user, onSubmit, onClose }) {
     footer: React.createElement(React.Fragment, null,
       React.createElement('button', { className: 'btn btn-ghost', onClick: onClose }, '取消'),
       React.createElement('button', { className: 'btn btn-primary', onClick: submit, disabled: loading }, loading ? '新增中...' : '新增記錄')
-    )
-  },
+    )},
     error && React.createElement('div', { className: 'alert alert-error' }, error),
     React.createElement('div', { className: 'form-group' },
       React.createElement('label', null, '記錄類型 *'),
@@ -434,9 +383,15 @@ function RecordForm({ classes, classrooms, user, onSubmit, onClose }) {
         )
       )
     ),
-    React.createElement('div', { className: 'form-group' },
-      React.createElement('label', null, '日期 *'),
-      React.createElement('input', { type: 'date', value: form.date, onChange: e => set('date', e.target.value) })
+    React.createElement('div', { className: 'grid-2' },
+      React.createElement('div', { className: 'form-group' },
+        React.createElement('label', null, '記錄日期 *'),
+        React.createElement('input', { type: 'date', value: form.date, onChange: e => set('date', e.target.value) })
+      ),
+      form.type === 'task' && React.createElement('div', { className: 'form-group' },
+        React.createElement('label', null, '執行日期'),
+        React.createElement('input', { type: 'date', value: form.execute_date, onChange: e => set('execute_date', e.target.value) })
+      )
     ),
     React.createElement('div', { className: 'form-group' },
       React.createElement('label', null, '內容描述 *'),
@@ -449,21 +404,17 @@ function RecordForm({ classes, classrooms, user, onSubmit, onClose }) {
 function ResolveModal({ record, user, onSubmit, onClose }) {
   const [note, setNote] = useState('');
   const [loading, setLoading] = useState(false);
-
   async function submit() {
     setLoading(true);
     await api('resolveRecord', { id: record.id, resolved_by: user.id, resolve_note: note });
-    setLoading(false);
-    onSubmit();
+    setLoading(false); onSubmit();
   }
-
   return React.createElement(Modal, { title: '標記已解決', onClose,
     footer: React.createElement(React.Fragment, null,
       React.createElement('button', { className: 'btn btn-ghost', onClick: onClose }, '取消'),
       React.createElement('button', { className: 'btn btn-success', onClick: submit, disabled: loading }, loading ? '處理中...' : '✓ 確認已解決')
-    )
-  },
-    React.createElement('p', { className: 'text-sm text-muted', style: { marginBottom: 12 } }, `記錄：${record.description}`),
+    )},
+    React.createElement('p', { className: 'text-sm text-muted', style: { marginBottom: 10 } }, record.description),
     React.createElement('div', { className: 'form-group' },
       React.createElement('label', null, '解決方式說明'),
       React.createElement('textarea', { value: note, onChange: e => setNote(e.target.value), placeholder: '請說明如何處理此問題...' })
@@ -474,18 +425,16 @@ function ResolveModal({ record, user, onSubmit, onClose }) {
 // ===== RECORD DETAIL =====
 function RecordDetail({ record, classes, classrooms, user, onResolve, onClose }) {
   const t = TYPE_MAP[record.type] || {};
-  const cls = classes.find(c => c.id === record.class_id);
+  const cls  = classes.find(c => c.id === record.class_id);
   const room = classrooms.find(c => c.id === record.classroom_id);
   const needResolve = record.type !== 'log';
-  const canResolve = needResolve && record.status !== 'resolved';
-
+  const canResolve  = needResolve && record.status !== 'resolved';
   return React.createElement(Modal, { title: '交接記錄詳情', onClose,
     footer: React.createElement(React.Fragment, null,
       canResolve && React.createElement('button', { className: 'btn btn-success', onClick: onResolve }, '✓ 標記已解決'),
       React.createElement('button', { className: 'btn btn-ghost', onClick: onClose }, '關閉')
-    )
-  },
-    React.createElement('div', { className: 'flex gap-2 items-center flex-wrap', style: { marginBottom: 14 } },
+    )},
+    React.createElement('div', { className: 'flex gap-2 items-center flex-wrap', style: { marginBottom: 12 } },
       React.createElement('span', { className: `badge ${t.badge}` }, t.icon + ' ' + t.label),
       record.status === 'resolved'
         ? React.createElement('span', { className: 'badge badge-resolved' }, '✓ 已解決')
@@ -495,15 +444,14 @@ function RecordDetail({ record, classes, classrooms, user, onResolve, onClose })
     React.createElement('div', { className: 'grid-2 text-sm' },
       React.createElement('div', null, React.createElement('span', { className: 'text-muted' }, '班級：'), cls?.name || '-'),
       React.createElement('div', null, React.createElement('span', { className: 'text-muted' }, '教室：'), room?.name || '-'),
-      React.createElement('div', null, React.createElement('span', { className: 'text-muted' }, '日期：'), record.date),
+      React.createElement('div', null, React.createElement('span', { className: 'text-muted' }, '記錄日期：'), record.date),
+      record.type === 'task' && record.execute_date && React.createElement('div', null, React.createElement('span', { className: 'text-muted' }, '執行日期：'), record.execute_date),
       React.createElement('div', null, React.createElement('span', { className: 'text-muted' }, '建立時間：'), fmtDate(record.created_at))
     ),
-    record.status === 'resolved' && React.createElement('div', { className: 'resolve-box', style: { marginTop: 16 } },
-      React.createElement('p', null, '✓ 已解決'),
-      React.createElement('div', { className: 'text-sm', style: { marginTop: 6 } },
-        record.resolve_note && React.createElement('div', null, '解決方式：', record.resolve_note),
-        React.createElement('div', { className: 'text-muted mt-2' }, '解決時間：', fmtDate(record.resolved_at))
-      )
+    record.status === 'resolved' && React.createElement('div', { className: 'resolve-box', style: { marginTop: 14 } },
+      React.createElement('p', { style: { fontSize: 13, fontWeight: 700, color: 'var(--success)', marginBottom: 6 } }, '✓ 已解決'),
+      record.resolve_note && React.createElement('div', { className: 'text-sm' }, '解決方式：', record.resolve_note),
+      React.createElement('div', { className: 'text-sm text-muted mt-2' }, '解決時間：', fmtDate(record.resolved_at))
     )
   );
 }
@@ -515,8 +463,8 @@ function RecordsPage({ user, classes, classrooms }) {
   const [showForm, setShowForm] = useState(false);
   const [detail, setDetail] = useState(null);
   const [resolving, setResolving] = useState(null);
-  const [filter, setFilter] = useState({ class_id: '', classroom_id: '', type: '', date_from: '', date_to: '' });
   const [activeTab, setActiveTab] = useState('all');
+  const [filter, setFilter] = useState({ class_id: '', classroom_id: '', type: '', date_from: '', date_to: '', execute_from: '', execute_to: '' });
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -527,29 +475,26 @@ function RecordsPage({ user, classes, classrooms }) {
 
   useEffect(() => { load(); }, [load]);
 
-  const filtered = activeTab === 'open'
-    ? records.filter(r => r.status !== 'resolved' && r.type !== 'log')
-    : activeTab === 'equipment'
-    ? records.filter(r => r.type === 'equipment')
-    : records;
+  const filtered = activeTab === 'open'      ? records.filter(r => r.status !== 'resolved' && r.type !== 'log')
+                 : activeTab === 'equipment' ? records.filter(r => r.type === 'equipment')
+                 : activeTab === 'task'      ? records.filter(r => r.type === 'task')
+                 : records;
 
   function RecordCard({ r }) {
     const t = TYPE_MAP[r.type] || {};
-    const cls = classes.find(c => c.id === r.class_id);
+    const cls  = classes.find(c => c.id === r.class_id);
     const room = classrooms.find(c => c.id === r.classroom_id);
     const needResolve = r.type !== 'log';
-
     return React.createElement('div', { className: `record-card ${r.status === 'resolved' ? 'resolved' : ''}`, onClick: () => setDetail(r) },
       React.createElement('div', { className: 'record-top' },
         React.createElement('span', { className: 'record-title' }, r.description),
-        needResolve && React.createElement('span', { className: `badge ${r.status === 'resolved' ? 'badge-resolved' : 'badge-open'}` },
-          r.status === 'resolved' ? '✓ 已解決' : '處理中'
-        )
+        needResolve && React.createElement('span', { className: `badge ${r.status === 'resolved' ? 'badge-resolved' : 'badge-open'}` }, r.status === 'resolved' ? '✓ 已解決' : '處理中')
       ),
       React.createElement('div', { className: 'record-meta' },
         React.createElement('span', { className: `badge ${t.badge}` }, t.icon + ' ' + t.label),
-        cls && React.createElement('span', { className: 'meta-tag', style: { background: '#f1f5f9', color: '#475569' } }, cls.name),
-        room && React.createElement('span', { className: 'meta-tag', style: { background: '#f1f5f9', color: '#475569' } }, room.name)
+        cls  && React.createElement('span', { className: 'badge badge-log' }, cls.name),
+        room && React.createElement('span', { className: 'badge badge-log' }, room.name),
+        r.type === 'task' && r.execute_date && React.createElement('span', { className: 'badge', style: { background: '#fef3c7', color: '#92400e' } }, '執行：' + r.execute_date)
       ),
       React.createElement('div', { className: 'record-footer' },
         React.createElement('span', { className: 'record-time' }, r.date),
@@ -559,13 +504,13 @@ function RecordsPage({ user, classes, classrooms }) {
   }
 
   return React.createElement('div', null,
-    React.createElement('div', { className: 'flex justify-between items-center', style: { marginBottom: 16 } },
+    React.createElement('div', { className: 'flex justify-between items-center', style: { marginBottom: 12 } },
       React.createElement('div', { className: 'tabs' },
-        [['all','全部'], ['open','待處理'], ['equipment','設備異常']].map(([k,l]) =>
-          React.createElement('button', { key: k, className: `tab ${activeTab === k ? 'active' : ''}`, onClick: () => setActiveTab(k) }, l)
+        [['all','全部'],['open','待處理'],['task','交辦'],['equipment','設備']].map(([k,l]) =>
+          React.createElement('button', { key: k, className: `tab ${activeTab===k?'active':''}`, onClick: () => setActiveTab(k) }, l)
         )
       ),
-      React.createElement('button', { className: 'btn btn-primary', onClick: () => setShowForm(true) }, '+ 新增記錄')
+      React.createElement('button', { className: 'btn btn-primary', style: { fontSize: 13, padding: '8px 14px' }, onClick: () => setShowForm(true) }, '+ 新增')
     ),
     React.createElement('div', { className: 'filter-bar' },
       React.createElement('select', { value: filter.class_id, onChange: e => setFilter(f => ({ ...f, class_id: e.target.value })) },
@@ -578,18 +523,19 @@ function RecordsPage({ user, classes, classrooms }) {
       ),
       React.createElement('select', { value: filter.type, onChange: e => setFilter(f => ({ ...f, type: e.target.value })) },
         React.createElement('option', { value: '' }, '所有類型'),
-        Object.entries(TYPE_MAP).map(([k, v]) => React.createElement('option', { key: k, value: k }, v.label))
+        Object.entries(TYPE_MAP).map(([k,v]) => React.createElement('option', { key: k, value: k }, v.label))
       ),
-      React.createElement('input', { type: 'date', value: filter.date_from, onChange: e => setFilter(f => ({ ...f, date_from: e.target.value })), title: '起始日期' }),
-      React.createElement('input', { type: 'date', value: filter.date_to, onChange: e => setFilter(f => ({ ...f, date_to: e.target.value })), title: '結束日期' }),
-      React.createElement('button', { className: 'btn btn-ghost', onClick: load }, '🔍 查詢')
+      React.createElement('input', { type: 'date', value: filter.date_from, onChange: e => setFilter(f => ({ ...f, date_from: e.target.value })), title: '記錄起始日' }),
+      React.createElement('input', { type: 'date', value: filter.date_to, onChange: e => setFilter(f => ({ ...f, date_to: e.target.value })), title: '記錄結束日' }),
+      React.createElement('input', { type: 'date', value: filter.execute_from, onChange: e => setFilter(f => ({ ...f, execute_from: e.target.value })), title: '執行日期起' }),
+      React.createElement('input', { type: 'date', value: filter.execute_to, onChange: e => setFilter(f => ({ ...f, execute_to: e.target.value })), title: '執行日期迄' }),
+      React.createElement('button', { className: 'btn btn-ghost', style: { fontSize: 13 }, onClick: load }, '🔍 查詢')
     ),
     loading
       ? React.createElement('div', { className: 'loading' }, React.createElement('span', { className: 'spinner' }), '載入中...')
       : filtered.length === 0
       ? React.createElement('div', { className: 'empty' }, React.createElement('div', { className: 'empty-icon' }, '📭'), React.createElement('p', null, '沒有符合的記錄'))
       : React.createElement('div', { className: 'record-list' }, filtered.map(r => React.createElement(RecordCard, { key: r.id, r }))),
-
     showForm && React.createElement(RecordForm, { classes, classrooms, user, onClose: () => setShowForm(false), onSubmit: () => { setShowForm(false); load(); } }),
     detail && !resolving && React.createElement(RecordDetail, { record: detail, classes, classrooms, user, onClose: () => setDetail(null), onResolve: () => setResolving(detail) }),
     resolving && React.createElement(ResolveModal, { record: resolving, user, onClose: () => setResolving(null), onSubmit: () => { setResolving(null); setDetail(null); load(); } })
@@ -616,125 +562,377 @@ function CheckPage({ user, classrooms }) {
     if (res.success) setItems(res.data || []);
   }
 
-  function selectPeriod(p) {
-    setPeriod(p); setSubmitted(false); setSelections({}); setMsg('');
-  }
-
-  function select(itemId, status) {
-    setSelections(s => ({ ...s, [itemId]: status }));
-  }
-
+  function selectPeriod(p) { setPeriod(p); setSubmitted(false); setSelections({}); setMsg(''); }
+  function select(itemId, status) { setSelections(s => ({ ...s, [itemId]: status })); }
   const allSelected = items.length > 0 && items.every(i => selections[i.id]);
+  const periodLabel = period === 'before' ? '課前' : period === 'after' ? '課後' : '';
 
   async function submit() {
     if (!period) { setMsg('請選擇課前或課後'); return; }
     if (!roomId) { setMsg('請選擇教室'); return; }
     if (!allSelected) { setMsg('請為所有項目選擇狀態'); return; }
     setLoading(true); setMsg('');
-    const res = await api('submitCheckRecord', {
-      classroom_id: roomId,
-      checked_by: user.id,
-      note,
-      period,
-      items: items.map(i => ({ item_id: i.id, item_name: i.item_name, status: selections[i.id] }))
-    });
+    const res = await api('submitCheckRecord', { classroom_id: roomId, checked_by: user.id, note, period, items: items.map(i => ({ item_id: i.id, item_name: i.item_name, status: selections[i.id] })) });
     setLoading(false);
     if (res.success) setSubmitted(true);
     else setMsg('提交失敗，請重試');
   }
 
-  const periodLabel = period === 'before' ? '課前' : period === 'after' ? '課後' : '';
-
   return React.createElement('div', null,
     React.createElement('div', { className: 'card' },
-      React.createElement('div', { className: 'card-header' },
-        React.createElement('span', { className: 'card-title' }, '🏁 課前課後檢查')
-      ),
+      React.createElement('div', { className: 'card-header' }, React.createElement('span', { className: 'card-title' }, '🏁 課前課後檢查')),
       React.createElement('div', { className: 'card-body' },
         submitted
           ? React.createElement('div', null,
-              React.createElement('div', { className: 'alert alert-success', style: { textAlign: 'center', padding: 24 } },
-                '✓ ' + periodLabel + '檢查已完成提交！'
-              ),
-              React.createElement('button', {
-                className: 'btn btn-ghost btn-full', style: { marginTop: 12 },
-                onClick: () => { setSubmitted(false); setSelections({}); setNote(''); setPeriod(''); }
-              }, '繼續填寫下一份')
+              React.createElement('div', { className: 'alert alert-success', style: { textAlign: 'center', padding: 20 } }, '✓ ' + periodLabel + '檢查已完成提交！'),
+              React.createElement('button', { className: 'btn btn-ghost btn-full', style: { marginTop: 10 }, onClick: () => { setSubmitted(false); setSelections({}); setNote(''); setPeriod(''); } }, '繼續填寫下一份')
             )
           : React.createElement('div', null,
-            React.createElement('div', { className: 'form-group' },
-              React.createElement('label', null, '選擇時段 *'),
-              React.createElement('div', { className: 'flex gap-2', style: { marginTop: 4 } },
-                React.createElement('button', {
-                  className: 'btn', style: {
-                    flex: 1, justifyContent: 'center', fontSize: 15, fontWeight: 700,
-                    background: period === 'before' ? '#dbeafe' : 'var(--surface)',
-                    color: period === 'before' ? '#1e40af' : 'var(--text-2)',
-                    border: period === 'before' ? '2px solid #1e40af' : '2px solid var(--border)',
-                    padding: '12px'
-                  },
-                  onClick: () => selectPeriod('before')
-                }, '🌅 課前檢查'),
-                React.createElement('button', {
-                  className: 'btn', style: {
-                    flex: 1, justifyContent: 'center', fontSize: 15, fontWeight: 700,
-                    background: period === 'after' ? '#dcfce7' : 'var(--surface)',
-                    color: period === 'after' ? '#16a34a' : 'var(--text-2)',
-                    border: period === 'after' ? '2px solid #16a34a' : '2px solid var(--border)',
-                    padding: '12px'
-                  },
-                  onClick: () => selectPeriod('after')
-                }, '🌇 課後檢查')
-              )
-            ),
-            React.createElement('div', { className: 'form-group' },
-              React.createElement('label', null, '選擇教室 *'),
-              React.createElement('select', { value: roomId, onChange: e => loadItems(e.target.value) },
-                React.createElement('option', { value: '' }, '請選擇教室'),
-                classrooms.map(c => React.createElement('option', { key: c.id, value: c.id }, c.name))
-              )
-            ),
-            loading && React.createElement('div', { className: 'loading' }, React.createElement('span', { className: 'spinner' }), '載入中...'),
-            items.length > 0 && React.createElement('div', null,
-              period && React.createElement('div', { style: {
-                background: period === 'before' ? '#dbeafe' : '#dcfce7',
-                color: period === 'before' ? '#1e40af' : '#16a34a',
-                borderRadius: 8, padding: '8px 12px', fontSize: 13, fontWeight: 700, marginBottom: 12
-              }}, period === 'before' ? '🌅 課前檢查模式' : '🌇 課後檢查模式'),
-              React.createElement('div', { className: 'divider' }),
-              items.map(item =>
-                React.createElement('div', { key: item.id, className: 'check-item' },
-                  React.createElement('span', { className: 'check-item-name' }, item.item_name),
-                  React.createElement('div', { className: 'check-options' },
-                    React.createElement('button', {
-                      className: 'check-opt ' + (selections[item.id] === 'completed' ? 'sel-completed' : ''),
-                      onClick: () => select(item.id, 'completed')
-                    }, '✓ 已完成'),
-                    React.createElement('button', {
-                      className: 'check-opt ' + (selections[item.id] === 'ignored' ? 'sel-ignored' : ''),
-                      onClick: () => select(item.id, 'ignored')
-                    }, '⚠ 忽略')
-                  )
+              React.createElement('div', { className: 'form-group' },
+                React.createElement('label', null, '選擇時段 *'),
+                React.createElement('div', { className: 'flex gap-2', style: { marginTop: 4 } },
+                  React.createElement('button', { className: 'btn', style: { flex: 1, justifyContent: 'center', fontWeight: 700, background: period==='before'?'#dbeafe':'var(--surface)', color: period==='before'?'#1e40af':'var(--text-2)', border: period==='before'?'2px solid #1e40af':'2px solid var(--border)', padding: '12px' }, onClick: () => selectPeriod('before') }, '🌅 課前'),
+                  React.createElement('button', { className: 'btn', style: { flex: 1, justifyContent: 'center', fontWeight: 700, background: period==='after'?'#dcfce7':'var(--surface)', color: period==='after'?'#16a34a':'var(--text-2)', border: period==='after'?'2px solid #16a34a':'2px solid var(--border)', padding: '12px' }, onClick: () => selectPeriod('after') }, '🌇 課後')
                 )
               ),
-              React.createElement('div', { className: 'divider' }),
               React.createElement('div', { className: 'form-group' },
-                React.createElement('label', null, '備註（選填）'),
-                React.createElement('textarea', { value: note, onChange: e => setNote(e.target.value), placeholder: '其他備註事項...' })
+                React.createElement('label', null, '選擇教室 *'),
+                React.createElement('select', { value: roomId, onChange: e => loadItems(e.target.value) },
+                  React.createElement('option', { value: '' }, '請選擇教室'),
+                  classrooms.map(c => React.createElement('option', { key: c.id, value: c.id }, c.name))
+                )
               ),
-              msg && React.createElement('div', { className: 'alert alert-error' }, msg),
-              React.createElement('button', {
-                className: 'btn btn-primary btn-full',
-                onClick: submit,
-                disabled: loading || !allSelected || !period
-              }, loading ? '提交中...' : '提交' + periodLabel + '檢查')
+              loading && React.createElement('div', { className: 'loading' }, React.createElement('span', { className: 'spinner' }), '載入中...'),
+              items.length > 0 && React.createElement('div', null,
+                period && React.createElement('div', { style: { background: period==='before'?'#dbeafe':'#dcfce7', color: period==='before'?'#1e40af':'#16a34a', borderRadius: 8, padding: '7px 12px', fontSize: 13, fontWeight: 700, marginBottom: 10 } }, period==='before'?'🌅 課前檢查模式':'🌇 課後檢查模式'),
+                React.createElement('div', { className: 'divider' }),
+                items.map(item => React.createElement('div', { key: item.id, className: 'check-item' },
+                  React.createElement('span', { className: 'check-item-name' }, item.item_name),
+                  React.createElement('div', { className: 'check-options' },
+                    React.createElement('button', { className: 'check-opt ' + (selections[item.id]==='completed'?'sel-completed':''), onClick: () => select(item.id, 'completed') }, '✓ 已完成'),
+                    React.createElement('button', { className: 'check-opt ' + (selections[item.id]==='ignored'?'sel-ignored':''), onClick: () => select(item.id, 'ignored') }, '⚠ 忽略')
+                  )
+                )),
+                React.createElement('div', { className: 'divider' }),
+                React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '備註（選填）'), React.createElement('textarea', { value: note, onChange: e => setNote(e.target.value), placeholder: '其他備註事項...' })),
+                msg && React.createElement('div', { className: 'alert alert-error' }, msg),
+                React.createElement('button', { className: 'btn btn-primary btn-full', onClick: submit, disabled: loading || !allSelected || !period }, loading ? '提交中...' : '提交' + periodLabel + '檢查')
+              ),
+              roomId && !loading && items.length === 0 && React.createElement('div', { className: 'empty' }, React.createElement('div', { className: 'empty-icon' }, '📋'), React.createElement('p', null, '此教室尚未設定檢查項目'))
+            )
+      )
+    )
+  );
+}
+
+// ===== ANNOUNCE PAGE =====
+function AnnouncePage({ user, classes }) {
+  const [announcements, setAnnouncements] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({ title: '', content: '' });
+  const [submitting, setSubmitting] = useState(false);
+  const [msg, setMsg] = useState('');
+  const [showExport, setShowExport] = useState(false);
+  const [exportData, setExportData] = useState(null);
+  const [exportLoading, setExportLoading] = useState(false);
+
+  const load = async () => {
+    setLoading(true);
+    const res = await api('getAnnouncements', {});
+    setLoading(false);
+    if (res.success) setAnnouncements(res.data || []);
+  };
+  useEffect(() => { load(); }, []);
+
+  async function submitAnnouncement() {
+    if (!form.title || !form.content) { setMsg('請填寫標題與內容'); return; }
+    setSubmitting(true); setMsg('');
+    const res = await api('createAnnouncement', { ...form, created_by: user.id });
+    setSubmitting(false);
+    if (res.success) { setShowForm(false); setForm({ title: '', content: '' }); load(); }
+    else setMsg(res.message || '發送失敗');
+  }
+
+  async function doExport(a) {
+    setExportLoading(true);
+    const res = await api('exportAnnouncementLog', { announcement_id: a.id });
+    setExportLoading(false);
+    if (!res.success || !res.data) return;
+    const headers = ['公告標題','公告時間','發布者','帳號','Email','角色','確認收到時間','知悉時間'];
+    const rows = res.data.map(r => headers.map(h => r[h] || ''));
+    let html = '<html xmlns:o="urn:schemas-microsoft-com:office:office"><head><meta charset="UTF-8"></head><body><table>';
+    html += '<tr>' + headers.map(h => `<th style="background:#1e40af;color:#fff;padding:6px;">${h}</th>`).join('') + '</tr>';
+    rows.forEach((row, i) => {
+      html += '<tr>' + row.map(cell => `<td style="background:${i%2===0?'#fff':'#f0f4f8'};padding:4px;">${cell}</td>`).join('') + '</tr>';
+    });
+    html += '</table></body></html>';
+    const blob = new Blob(['\uFEFF' + html], { type: 'application/vnd.ms-excel;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url; link.download = `公告確認記錄_${a.title}.xls`; link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  return React.createElement('div', null,
+    canManage(user.role) && React.createElement('div', { style: { marginBottom: 14 } },
+      React.createElement('button', { className: 'btn btn-primary', onClick: () => setShowForm(true) }, '📢 發送新公告')
+    ),
+    loading
+      ? React.createElement('div', { className: 'loading' }, React.createElement('span', { className: 'spinner' }), '載入中...')
+      : announcements.length === 0
+      ? React.createElement('div', { className: 'empty' }, React.createElement('div', { className: 'empty-icon' }, '📭'), React.createElement('p', null, '目前沒有公告'))
+      : announcements.map(a => {
+          const total    = (a.confirms || []).length;
+          const ackCount = (a.confirms || []).filter(c => c.acknowledged_at).length;
+          const myC = (a.confirms || []).find(c => c.user_id === user.id);
+          return React.createElement('div', { key: a.id, className: 'card' },
+            React.createElement('div', { className: 'card-header' },
+              React.createElement('span', { className: 'card-title' }, '📢 ' + a.title),
+              canManage(user.role) && React.createElement('button', { className: 'btn btn-ghost', style: { fontSize: 12, padding: '5px 10px' }, onClick: () => doExport(a) }, exportLoading ? '...' : '⬇ 匯出')
             ),
-            roomId && !loading && items.length === 0 && React.createElement('div', { className: 'empty' },
-              React.createElement('div', { className: 'empty-icon' }, '📋'),
-              React.createElement('p', null, '此教室尚未設定檢查項目，請聯絡管理員')
-            ),
-            msg && !roomId && React.createElement('div', { className: 'alert alert-error' }, msg)
+            React.createElement('div', { className: 'card-body' },
+              React.createElement('p', { style: { fontSize: 14, lineHeight: 1.7, whiteSpace: 'pre-wrap', marginBottom: 12 } }, a.content),
+              React.createElement('div', { className: 'flex gap-2 flex-wrap items-center' },
+                React.createElement('span', { className: 'text-sm text-muted' }, fmtDate(a.created_at)),
+                canManage(user.role) && React.createElement('span', { className: 'badge badge-log' }, `已知悉 ${ackCount}/${total} 人`),
+                myC?.acknowledged_at
+                  ? React.createElement('span', { className: 'badge badge-resolved' }, '✓ 已知悉')
+                  : myC?.confirmed_at
+                  ? React.createElement('span', { className: 'badge badge-open' }, '已確認，待知悉')
+                  : React.createElement('span', { className: 'badge badge-open' }, '待確認')
+              )
+            )
+          );
+        }),
+    showForm && React.createElement(Modal, { title: '發送公告', onClose: () => setShowForm(false),
+      footer: React.createElement(React.Fragment, null,
+        React.createElement('button', { className: 'btn btn-ghost', onClick: () => setShowForm(false) }, '取消'),
+        React.createElement('button', { className: 'btn btn-primary', onClick: submitAnnouncement, disabled: submitting }, submitting ? '發送中...' : '📢 發送給所有人')
+      )},
+      msg && React.createElement('div', { className: 'alert alert-error' }, msg),
+      React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '公告標題 *'), React.createElement('input', { value: form.title, onChange: e => setForm(f => ({ ...f, title: e.target.value })), placeholder: '請輸入公告標題' })),
+      React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '公告內容 *'), React.createElement('textarea', { value: form.content, onChange: e => setForm(f => ({ ...f, content: e.target.value })), placeholder: '請輸入公告內容...', style: { minHeight: 120 } })),
+      React.createElement('div', { className: 'alert alert-info' }, '📧 發送後將自動寄送 Email 通知給所有帳號，並於登入時要求二階段確認。')
+    )
+  );
+}
+
+// ===== CHECK RECORDS PAGE =====
+function CheckRecordsPage({ classrooms }) {
+  const [filter, setFilter] = useState({
+    date_from: new Date(Date.now()-30*24*60*60*1000).toISOString().split('T')[0],
+    date_to: new Date().toISOString().split('T')[0],
+    classroom_id: '', period: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [records, setRecords] = useState(null);
+  const [msg, setMsg] = useState('');
+  const [detail, setDetail] = useState(null);
+  const [exportLoading, setExportLoading] = useState(false);
+
+  async function fetchData() {
+    if (!filter.date_from || !filter.date_to) { setMsg('請選擇日期區間'); return; }
+    setLoading(true); setMsg(''); setRecords(null);
+    const res = await api('getCheckRecordsFull', filter);
+    setLoading(false);
+    if (res.success) { setRecords(res.data || []); if ((res.data||[]).length === 0) setMsg('查無符合條件的記錄'); }
+    else setMsg(res.message || '查詢失敗');
+  }
+
+  async function doExport() {
+    setExportLoading(true);
+    const res = await api('exportCheckRecords', filter);
+    setExportLoading(false);
+    if (!res.success || !res.data) return;
+    const headers = ['檢查時間','時段','教室','執行者','檢查項目','狀態','備註'];
+    const rows = res.data.map(r => headers.map(h => r[h] || ''));
+    let html = '<html xmlns:o="urn:schemas-microsoft-com:office:office"><head><meta charset="UTF-8"></head><body><table>';
+    html += '<tr>' + headers.map(h => '<th style="background:#1e40af;color:#fff;font-weight:bold;padding:6px;">' + h + '</th>').join('') + '</tr>';
+    rows.forEach((row, i) => {
+      html += '<tr>' + row.map(cell => '<td style="background:' + (i%2===0?'#fff':'#f0f4f8') + ';padding:4px;">' + cell + '</td>').join('') + '</tr>';
+    });
+    html += '</table></body></html>';
+    const blob = new Blob(['\uFEFF' + html], { type: 'application/vnd.ms-excel;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '課前課後檢查紀錄_' + filter.date_from.replace(/-/g,'') + '_' + filter.date_to.replace(/-/g,'') + '.xls';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  const periodLabel = p => p === 'before' ? '🌅 課前' : p === 'after' ? '🌇 課後' : '';
+
+  return React.createElement('div', null,
+    React.createElement('div', { className: 'card' },
+      React.createElement('div', { className: 'card-header' }, React.createElement('span', { className: 'card-title' }, '🏁 課前課後檢查紀錄')),
+      React.createElement('div', { className: 'card-body' },
+        React.createElement('div', { className: 'form-group' },
+          React.createElement('label', null, '日期區間 *'),
+          React.createElement('div', { className: 'flex gap-2 items-center flex-wrap' },
+            React.createElement('input', { type: 'date', value: filter.date_from, onChange: e => setFilter(f => ({ ...f, date_from: e.target.value })), style: { flex: 1, minWidth: 130 } }),
+            React.createElement('span', { className: 'text-muted' }, '至'),
+            React.createElement('input', { type: 'date', value: filter.date_to, onChange: e => setFilter(f => ({ ...f, date_to: e.target.value })), style: { flex: 1, minWidth: 130 } })
           )
+        ),
+        React.createElement('div', { className: 'grid-2' },
+          React.createElement('div', { className: 'form-group' },
+            React.createElement('label', null, '教室'),
+            React.createElement('select', { value: filter.classroom_id, onChange: e => setFilter(f => ({ ...f, classroom_id: e.target.value })) },
+              React.createElement('option', { value: '' }, '全部教室'),
+              classrooms.map(c => React.createElement('option', { key: c.id, value: c.id }, c.name))
+            )
+          ),
+          React.createElement('div', { className: 'form-group' },
+            React.createElement('label', null, '時段'),
+            React.createElement('select', { value: filter.period, onChange: e => setFilter(f => ({ ...f, period: e.target.value })) },
+              React.createElement('option', { value: '' }, '全部時段'),
+              React.createElement('option', { value: 'before' }, '🌅 課前'),
+              React.createElement('option', { value: 'after' }, '🌇 課後')
+            )
+          )
+        ),
+        msg && React.createElement('div', { className: 'alert alert-error' }, msg),
+        React.createElement('div', { className: 'flex gap-2 flex-wrap' },
+          React.createElement('button', { className: 'btn btn-primary', onClick: fetchData, disabled: loading },
+            loading ? React.createElement('span', null, React.createElement('span', { className: 'spinner' }), '查詢中...') : '🔍 查詢'
+          ),
+          records && records.length > 0 && React.createElement('button', { className: 'btn btn-success', onClick: doExport, disabled: exportLoading },
+            exportLoading ? '匯出中...' : '⬇ 匯出 XLS（' + records.length + ' 筆）'
+          )
+        )
+      )
+    ),
+
+    loading && React.createElement('div', { className: 'loading' }, React.createElement('span', { className: 'spinner' }), '載入中...'),
+
+    records && records.length > 0 && React.createElement('div', { className: 'record-list' },
+      records.map((r, i) => {
+        const completedCount = (r.items||[]).filter(it => it.status === 'completed').length;
+        const ignoredCount   = (r.items||[]).filter(it => it.status === 'ignored').length;
+        const totalCount     = (r.items||[]).length;
+        return React.createElement('div', { key: r.id || i, className: 'record-card', onClick: () => setDetail(r) },
+          React.createElement('div', { className: 'record-top' },
+            React.createElement('span', { className: 'record-title' }, r.classroom_name || '未知教室'),
+            React.createElement('span', { style: {
+              background: r.period === 'before' ? '#dbeafe' : '#dcfce7',
+              color: r.period === 'before' ? '#1e40af' : '#16a34a',
+              fontSize: 12, fontWeight: 700, padding: '3px 8px', borderRadius: 20
+            }}, periodLabel(r.period))
+          ),
+          React.createElement('div', { className: 'record-meta' },
+            React.createElement('span', { className: 'badge badge-resolved' }, '✓ ' + completedCount + ' 已完成'),
+            ignoredCount > 0 && React.createElement('span', { className: 'badge badge-open' }, '⚠ ' + ignoredCount + ' 忽略'),
+            React.createElement('span', { className: 'badge badge-log' }, r.checker_name)
+          ),
+          React.createElement('div', { className: 'record-footer' },
+            React.createElement('span', { className: 'record-time' }, String(r.checked_at).substring(0, 16)),
+            r.note && React.createElement('span', { className: 'record-time' }, '備註：' + r.note)
+          )
+        );
+      })
+    ),
+
+    detail && React.createElement('div', { className: 'modal-overlay', onClick: e => e.target === e.currentTarget && setDetail(null) },
+      React.createElement('div', { className: 'modal' },
+        React.createElement('div', { className: 'modal-header' },
+          React.createElement('span', { className: 'modal-title' }, '檢查明細 - ' + (detail.classroom_name || '')),
+          React.createElement('button', { className: 'close-btn', onClick: () => setDetail(null) }, '✕')
+        ),
+        React.createElement('div', { className: 'modal-body' },
+          React.createElement('div', { className: 'flex gap-2 flex-wrap items-center', style: { marginBottom: 12 } },
+            React.createElement('span', { style: { background: detail.period==='before'?'#dbeafe':'#dcfce7', color: detail.period==='before'?'#1e40af':'#16a34a', fontSize: 12, fontWeight: 700, padding: '3px 8px', borderRadius: 20 } }, periodLabel(detail.period)),
+            React.createElement('span', { className: 'text-sm text-muted' }, '執行者：' + (detail.checker_name || '-')),
+            React.createElement('span', { className: 'text-sm text-muted' }, String(detail.checked_at).substring(0, 16))
+          ),
+          detail.note && React.createElement('div', { className: 'alert alert-info', style: { marginBottom: 12 } }, '備註：' + detail.note),
+          React.createElement('div', { className: 'divider' }),
+          (detail.items || []).length === 0
+            ? React.createElement('div', { className: 'empty' }, React.createElement('p', null, '無檢查項目'))
+            : (detail.items || []).map((item, idx) =>
+                React.createElement('div', { key: idx, className: 'check-item' },
+                  React.createElement('span', { className: 'check-item-name' }, item.item_name),
+                  React.createElement('span', {
+                    style: {
+                      fontSize: 12, fontWeight: 700, padding: '4px 10px', borderRadius: 20,
+                      background: item.status === 'completed' ? 'var(--success-pale)' : 'var(--warning-pale)',
+                      color: item.status === 'completed' ? 'var(--success)' : 'var(--warning)'
+                    }
+                  }, item.status === 'completed' ? '✓ 已完成' : '⚠ 忽略')
+                )
+              )
+        ),
+        React.createElement('div', { className: 'modal-footer' },
+          React.createElement('button', { className: 'btn btn-ghost', onClick: () => setDetail(null) }, '關閉')
+        )
+      )
+    )
+  );
+}
+
+// ===== EXPORT PAGE =====
+function ExportPage({ classes }) {
+  const [filter, setFilter] = useState({ date_from: new Date(Date.now()-30*24*60*60*1000).toISOString().split('T')[0], date_to: new Date().toISOString().split('T')[0], class_id: '', type: '' });
+  const [loading, setLoading] = useState(false);
+  const [preview, setPreview] = useState(null);
+  const [msg, setMsg] = useState('');
+  const TYPE_LABEL = { abnormal:'課堂異常處理', counseling:'學員學習輔導紀錄', task:'課程交辦事項', log:'課堂狀況記錄', equipment:'設備異常' };
+
+  async function fetchData() {
+    if (!filter.date_from || !filter.date_to) { setMsg('請選擇日期區間'); return; }
+    setLoading(true); setMsg(''); setPreview(null);
+    const res = await api('exportRecords', filter);
+    setLoading(false);
+    if (res.success) { setPreview(res.data); if (res.data.length === 0) setMsg('查無符合條件的記錄'); }
+    else setMsg(res.message || '查詢失敗');
+  }
+
+  function exportXLS() {
+    if (!preview || preview.length === 0) return;
+    const headers = ['日期','執行日期','類型','班級','教室','內容','狀態','建立者','建立時間','解決者','解決時間','解決方式'];
+    const rows = preview.map(r => headers.map(h => r[h] || ''));
+    let html = '<html xmlns:o="urn:schemas-microsoft-com:office:office"><head><meta charset="UTF-8"></head><body><table>';
+    html += '<tr>' + headers.map(h => `<th style="background:#1e40af;color:#fff;font-weight:bold;padding:6px;">${h}</th>`).join('') + '</tr>';
+    rows.forEach((row, i) => { html += '<tr>' + row.map(cell => `<td style="background:${i%2===0?'#fff':'#f0f4f8'};padding:4px;">${cell}</td>`).join('') + '</tr>'; });
+    html += '</table></body></html>';
+    const blob = new Blob(['\uFEFF' + html], { type: 'application/vnd.ms-excel;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `交接記錄_${filter.date_from.replace(/-/g,'')}_${filter.date_to.replace(/-/g,'')}.xls`; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  return React.createElement('div', null,
+    React.createElement('div', { className: 'card' },
+      React.createElement('div', { className: 'card-header' }, React.createElement('span', { className: 'card-title' }, '📊 匯出交接記錄')),
+      React.createElement('div', { className: 'card-body' },
+        React.createElement('div', { className: 'form-group' },
+          React.createElement('label', null, '日期區間 *'),
+          React.createElement('div', { className: 'flex gap-2 items-center flex-wrap' },
+            React.createElement('input', { type: 'date', value: filter.date_from, onChange: e => setFilter(f => ({ ...f, date_from: e.target.value })), style: { flex: 1, minWidth: 130 } }),
+            React.createElement('span', { className: 'text-muted' }, '至'),
+            React.createElement('input', { type: 'date', value: filter.date_to, onChange: e => setFilter(f => ({ ...f, date_to: e.target.value })), style: { flex: 1, minWidth: 130 } })
+          )
+        ),
+        React.createElement('div', { className: 'grid-2' },
+          React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '班級'), React.createElement('select', { value: filter.class_id, onChange: e => setFilter(f => ({ ...f, class_id: e.target.value })) }, React.createElement('option', { value: '' }, '全部班級'), classes.map(c => React.createElement('option', { key: c.id, value: c.id }, c.name)))),
+          React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '類型'), React.createElement('select', { value: filter.type, onChange: e => setFilter(f => ({ ...f, type: e.target.value })) }, React.createElement('option', { value: '' }, '全部類型'), Object.entries(TYPE_LABEL).map(([k,v]) => React.createElement('option', { key: k, value: k }, v))))
+        ),
+        msg && React.createElement('div', { className: 'alert alert-error' }, msg),
+        React.createElement('div', { className: 'flex gap-2 flex-wrap' },
+          React.createElement('button', { className: 'btn btn-primary', onClick: fetchData, disabled: loading }, loading ? React.createElement('span', null, React.createElement('span', { className: 'spinner' }), '查詢中...') : '🔍 查詢預覽'),
+          preview && preview.length > 0 && React.createElement('button', { className: 'btn btn-success', onClick: exportXLS }, '⬇ 匯出 XLS（' + preview.length + ' 筆）')
+        )
+      )
+    ),
+    preview && preview.length > 0 && React.createElement('div', { className: 'card' },
+      React.createElement('div', { className: 'card-header' }, React.createElement('span', { className: 'card-title' }, '預覽（前20筆）'), React.createElement('span', { className: 'text-sm text-muted' }, `共 ${preview.length} 筆`)),
+      React.createElement('div', { style: { overflowX: 'auto' } },
+        React.createElement('table', { style: { width: '100%', borderCollapse: 'collapse', fontSize: 12 } },
+          React.createElement('thead', null, React.createElement('tr', { style: { background: '#f0f4f8' } }, ['日期','類型','班級','內容','狀態'].map(h => React.createElement('th', { key: h, style: { padding: '8px 10px', textAlign: 'left', fontWeight: 700, color: '#475569', borderBottom: '1px solid #e2e8f0' } }, h)))),
+          React.createElement('tbody', null, preview.slice(0,20).map((r,i) => React.createElement('tr', { key: i, style: { borderBottom: '1px solid #f1f5f9' } }, ['日期','類型','班級','內容','狀態'].map(h => React.createElement('td', { key: h, style: { padding: '7px 10px' } }, r[h]||'')))))
+        )
       )
     )
   );
@@ -754,25 +952,14 @@ function AdminPage({ classes, classrooms, onRefresh }) {
   const [newCheckItem, setNewCheckItem] = useState({ classroom_id: '', items: [{ item_name: '' }] });
   const [msg, setMsg] = useState('');
 
-  useEffect(() => {
-    api('getUsers').then(r => { if (r.success) setUsers(r.data || []); });
-  }, []);
+  useEffect(() => { api('getUsers').then(r => { if (r.success) setUsers(r.data || []); }); }, []);
 
   async function createUser() {
     const res = await api('createUser', newUser);
     if (res.success) { setShowUserForm(false); setNewUser({ name: '', email: '', password: '', role: 'assistant' }); api('getUsers').then(r => { if (r.success) setUsers(r.data || []); }); }
   }
-
-  async function createClass() {
-    const res = await api('createClass', newClass);
-    if (res.success) { setShowClassForm(false); setNewClass({ name: '', description: '' }); onRefresh(); }
-  }
-
-  async function createRoom() {
-    const res = await api('createClassroom', newRoom);
-    if (res.success) { setShowRoomForm(false); setNewRoom({ name: '', description: '' }); onRefresh(); }
-  }
-
+  async function createClass() { const res = await api('createClass', newClass); if (res.success) { setShowClassForm(false); setNewClass({ name: '', description: '' }); onRefresh(); } }
+  async function createRoom() { const res = await api('createClassroom', newRoom); if (res.success) { setShowRoomForm(false); setNewRoom({ name: '', description: '' }); onRefresh(); } }
   async function createCheckItems() {
     const validItems = newCheckItem.items.filter(i => i.item_name.trim());
     if (!newCheckItem.classroom_id || validItems.length === 0) { setMsg('請選擇教室並填寫至少一個項目'); return; }
@@ -780,139 +967,61 @@ function AdminPage({ classes, classrooms, onRefresh }) {
     if (res.success) { setShowCheckItemForm(false); setNewCheckItem({ classroom_id: '', items: [{ item_name: '' }] }); setMsg(''); }
   }
 
-  function addCheckItemRow() {
-    setNewCheckItem(f => ({ ...f, items: [...f.items, { item_name: '' }] }));
-  }
-
   return React.createElement('div', null,
-    React.createElement('div', { className: 'tabs', style: { marginBottom: 16 } },
-      [['users','帳號管理'], ['classes','班級管理'], ['classrooms','教室管理'], ['checkitems','檢查項目']].map(([k, l]) =>
-        React.createElement('button', { key: k, className: `tab ${tab === k ? 'active' : ''}`, onClick: () => setTab(k) }, l)
+    React.createElement('div', { className: 'tabs', style: { marginBottom: 14 } },
+      [['users','帳號'],['classes','班級'],['classrooms','教室'],['checkitems','檢查項目']].map(([k,l]) =>
+        React.createElement('button', { key: k, className: `tab ${tab===k?'active':''}`, onClick: () => setTab(k) }, l)
       )
     ),
-
     tab === 'users' && React.createElement('div', null,
-      React.createElement('div', { className: 'flex justify-between items-center', style: { marginBottom: 12 } },
+      React.createElement('div', { className: 'flex justify-between items-center', style: { marginBottom: 10 } },
         React.createElement('span', { className: 'text-sm text-muted' }, `共 ${users.length} 個帳號`),
-        React.createElement('button', { className: 'btn btn-primary', onClick: () => setShowUserForm(true) }, '+ 新增帳號')
+        React.createElement('button', { className: 'btn btn-primary', style: { fontSize: 13, padding: '8px 14px' }, onClick: () => setShowUserForm(true) }, '+ 新增帳號')
       ),
       React.createElement('div', { className: 'card' },
-        React.createElement('div', { className: 'card-body', style: { padding: 0 } },
+        React.createElement('div', { style: { overflowX: 'auto' } },
           React.createElement('table', { style: { width: '100%', borderCollapse: 'collapse' } },
-            React.createElement('thead', null,
-              React.createElement('tr', { style: { background: '#f8fafc' } },
-                ['姓名', 'Email', '角色', '狀態'].map(h => React.createElement('th', { key: h, style: { padding: '10px 16px', textAlign: 'left', fontSize: 13, fontWeight: 700, color: '#475569', borderBottom: '1px solid #e2e8f0' } }, h))
-              )
-            ),
-            React.createElement('tbody', null,
-              users.filter(u => u.id).map(u => React.createElement('tr', { key: u.id, style: { borderBottom: '1px solid #f1f5f9' } },
-                React.createElement('td', { style: { padding: '10px 16px', fontSize: 14 } }, u.name),
-                React.createElement('td', { style: { padding: '10px 16px', fontSize: 13, color: '#475569' } }, u.email),
-                React.createElement('td', { style: { padding: '10px 16px' } }, React.createElement('span', { className: 'badge badge-log' }, ROLE_MAP[u.role] || u.role)),
-                React.createElement('td', { style: { padding: '10px 16px' } }, u.active === true || u.active === 'TRUE'
-                  ? React.createElement('span', { className: 'badge badge-resolved' }, '啟用')
-                  : React.createElement('span', { className: 'badge badge-open' }, '停用'))
-              ))
-            )
+            React.createElement('thead', null, React.createElement('tr', { style: { background: '#f8fafc' } }, ['姓名','Email','角色','狀態'].map(h => React.createElement('th', { key: h, style: { padding: '10px 14px', textAlign: 'left', fontSize: 13, fontWeight: 700, color: '#475569', borderBottom: '1px solid #e2e8f0' } }, h)))),
+            React.createElement('tbody', null, users.filter(u => u.id).map(u => React.createElement('tr', { key: u.id, style: { borderBottom: '1px solid #f1f5f9' } },
+              React.createElement('td', { style: { padding: '10px 14px', fontSize: 14 } }, u.name),
+              React.createElement('td', { style: { padding: '10px 14px', fontSize: 12, color: '#475569' } }, u.email),
+              React.createElement('td', { style: { padding: '10px 14px' } }, React.createElement('span', { className: 'badge badge-log' }, ROLE_MAP[u.role] || u.role)),
+              React.createElement('td', { style: { padding: '10px 14px' } }, (u.active === true || String(u.active).toUpperCase() === 'TRUE') ? React.createElement('span', { className: 'badge badge-resolved' }, '啟用') : React.createElement('span', { className: 'badge badge-open' }, '停用'))
+            )))
           )
         )
       ),
       showUserForm && React.createElement(Modal, { title: '新增帳號', onClose: () => setShowUserForm(false),
-        footer: React.createElement(React.Fragment, null,
-          React.createElement('button', { className: 'btn btn-ghost', onClick: () => setShowUserForm(false) }, '取消'),
-          React.createElement('button', { className: 'btn btn-primary', onClick: createUser }, '新增')
-        )
-      },
-        ['name', 'email', 'password'].map(k =>
-          React.createElement('div', { key: k, className: 'form-group' },
-            React.createElement('label', null, k === 'name' ? '姓名' : k === 'email' ? 'Email' : '密碼'),
-            React.createElement('input', { type: k === 'password' ? 'password' : 'text', value: newUser[k], onChange: e => setNewUser(f => ({ ...f, [k]: e.target.value })) })
-          )
-        ),
-        React.createElement('div', { className: 'form-group' },
-          React.createElement('label', null, '角色'),
-          React.createElement('select', { value: newUser.role, onChange: e => setNewUser(f => ({ ...f, role: e.target.value })) },
-            Object.entries(ROLE_MAP).map(([k, v]) => React.createElement('option', { key: k, value: k }, v))
-          )
-        )
+        footer: React.createElement(React.Fragment, null, React.createElement('button', { className: 'btn btn-ghost', onClick: () => setShowUserForm(false) }, '取消'), React.createElement('button', { className: 'btn btn-primary', onClick: createUser }, '新增'))},
+        ['name','email','password'].map(k => React.createElement('div', { key: k, className: 'form-group' }, React.createElement('label', null, k==='name'?'姓名':k==='email'?'Email':'密碼'), React.createElement('input', { type: k==='password'?'password':'text', value: newUser[k], onChange: e => setNewUser(f => ({ ...f, [k]: e.target.value })) }))),
+        React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '角色'), React.createElement('select', { value: newUser.role, onChange: e => setNewUser(f => ({ ...f, role: e.target.value })) }, Object.entries(ROLE_MAP).map(([k,v]) => React.createElement('option', { key: k, value: k }, v))))
       )
     ),
-
     tab === 'classes' && React.createElement('div', null,
-      React.createElement('div', { className: 'flex justify-between items-center', style: { marginBottom: 12 } },
-        React.createElement('span', { className: 'text-sm text-muted' }, `共 ${classes.length} 個班級`),
-        React.createElement('button', { className: 'btn btn-primary', onClick: () => setShowClassForm(true) }, '+ 新增班級')
-      ),
-      React.createElement('div', { className: 'record-list' },
-        classes.map(c => React.createElement('div', { key: c.id, className: 'card' },
-          React.createElement('div', { className: 'card-body', style: { padding: '12px 16px' } },
-            React.createElement('span', { style: { fontWeight: 600 } }, c.name),
-            c.description && React.createElement('span', { className: 'text-muted text-sm', style: { marginLeft: 8 } }, c.description)
-          )
-        ))
-      ),
-      showClassForm && React.createElement(Modal, { title: '新增班級', onClose: () => setShowClassForm(false),
-        footer: React.createElement(React.Fragment, null,
-          React.createElement('button', { className: 'btn btn-ghost', onClick: () => setShowClassForm(false) }, '取消'),
-          React.createElement('button', { className: 'btn btn-primary', onClick: createClass }, '新增')
-        )
-      },
+      React.createElement('div', { className: 'flex justify-between items-center', style: { marginBottom: 10 } }, React.createElement('span', { className: 'text-sm text-muted' }, `共 ${classes.length} 個班級`), React.createElement('button', { className: 'btn btn-primary', style: { fontSize: 13, padding: '8px 14px' }, onClick: () => setShowClassForm(true) }, '+ 新增班級')),
+      React.createElement('div', { className: 'record-list' }, classes.map(c => React.createElement('div', { key: c.id, className: 'card' }, React.createElement('div', { className: 'card-body', style: { padding: '12px 16px' } }, React.createElement('span', { style: { fontWeight: 600 } }, c.name), c.description && React.createElement('span', { className: 'text-muted text-sm', style: { marginLeft: 8 } }, c.description))))),
+      showClassForm && React.createElement(Modal, { title: '新增班級', onClose: () => setShowClassForm(false), footer: React.createElement(React.Fragment, null, React.createElement('button', { className: 'btn btn-ghost', onClick: () => setShowClassForm(false) }, '取消'), React.createElement('button', { className: 'btn btn-primary', onClick: createClass }, '新增'))},
         React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '班級名稱'), React.createElement('input', { value: newClass.name, onChange: e => setNewClass(f => ({ ...f, name: e.target.value })) })),
         React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '說明'), React.createElement('input', { value: newClass.description, onChange: e => setNewClass(f => ({ ...f, description: e.target.value })) }))
       )
     ),
-
     tab === 'classrooms' && React.createElement('div', null,
-      React.createElement('div', { className: 'flex justify-between items-center', style: { marginBottom: 12 } },
-        React.createElement('span', { className: 'text-sm text-muted' }, `共 ${classrooms.length} 個教室`),
-        React.createElement('button', { className: 'btn btn-primary', onClick: () => setShowRoomForm(true) }, '+ 新增教室')
-      ),
-      React.createElement('div', { className: 'record-list' },
-        classrooms.map(c => React.createElement('div', { key: c.id, className: 'card' },
-          React.createElement('div', { className: 'card-body', style: { padding: '12px 16px' } },
-            React.createElement('span', { style: { fontWeight: 600 } }, c.name),
-            c.description && React.createElement('span', { className: 'text-muted text-sm', style: { marginLeft: 8 } }, c.description)
-          )
-        ))
-      ),
-      showRoomForm && React.createElement(Modal, { title: '新增教室', onClose: () => setShowRoomForm(false),
-        footer: React.createElement(React.Fragment, null,
-          React.createElement('button', { className: 'btn btn-ghost', onClick: () => setShowRoomForm(false) }, '取消'),
-          React.createElement('button', { className: 'btn btn-primary', onClick: createRoom }, '新增')
-        )
-      },
+      React.createElement('div', { className: 'flex justify-between items-center', style: { marginBottom: 10 } }, React.createElement('span', { className: 'text-sm text-muted' }, `共 ${classrooms.length} 個教室`), React.createElement('button', { className: 'btn btn-primary', style: { fontSize: 13, padding: '8px 14px' }, onClick: () => setShowRoomForm(true) }, '+ 新增教室')),
+      React.createElement('div', { className: 'record-list' }, classrooms.map(c => React.createElement('div', { key: c.id, className: 'card' }, React.createElement('div', { className: 'card-body', style: { padding: '12px 16px' } }, React.createElement('span', { style: { fontWeight: 600 } }, c.name), c.description && React.createElement('span', { className: 'text-muted text-sm', style: { marginLeft: 8 } }, c.description))))),
+      showRoomForm && React.createElement(Modal, { title: '新增教室', onClose: () => setShowRoomForm(false), footer: React.createElement(React.Fragment, null, React.createElement('button', { className: 'btn btn-ghost', onClick: () => setShowRoomForm(false) }, '取消'), React.createElement('button', { className: 'btn btn-primary', onClick: createRoom }, '新增'))},
         React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '教室名稱'), React.createElement('input', { value: newRoom.name, onChange: e => setNewRoom(f => ({ ...f, name: e.target.value })) })),
         React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '說明'), React.createElement('input', { value: newRoom.description, onChange: e => setNewRoom(f => ({ ...f, description: e.target.value })) }))
       )
     ),
-
     tab === 'checkitems' && React.createElement('div', null,
-      React.createElement('div', { className: 'flex justify-between items-center', style: { marginBottom: 12 } },
-        React.createElement('span', { className: 'text-sm text-muted' }, '為各教室設定課前課後檢查項目'),
-        React.createElement('button', { className: 'btn btn-primary', onClick: () => setShowCheckItemForm(true) }, '+ 新增檢查項目')
-      ),
+      React.createElement('div', { className: 'flex justify-between items-center', style: { marginBottom: 10 } }, React.createElement('span', { className: 'text-sm text-muted' }, '為各教室設定課前課後檢查項目'), React.createElement('button', { className: 'btn btn-primary', style: { fontSize: 13, padding: '8px 14px' }, onClick: () => setShowCheckItemForm(true) }, '+ 新增項目')),
       msg && React.createElement('div', { className: 'alert alert-error' }, msg),
-      showCheckItemForm && React.createElement(Modal, { title: '新增教室檢查項目', onClose: () => setShowCheckItemForm(false),
-        footer: React.createElement(React.Fragment, null,
-          React.createElement('button', { className: 'btn btn-ghost', onClick: () => setShowCheckItemForm(false) }, '取消'),
-          React.createElement('button', { className: 'btn btn-primary', onClick: createCheckItems }, '儲存')
-        )
-      },
-        React.createElement('div', { className: 'form-group' },
-          React.createElement('label', null, '選擇教室'),
-          React.createElement('select', { value: newCheckItem.classroom_id, onChange: e => setNewCheckItem(f => ({ ...f, classroom_id: e.target.value })) },
-            React.createElement('option', { value: '' }, '請選擇教室'),
-            classrooms.map(c => React.createElement('option', { key: c.id, value: c.id }, c.name))
-          )
-        ),
+      showCheckItemForm && React.createElement(Modal, { title: '新增教室檢查項目', onClose: () => setShowCheckItemForm(false), footer: React.createElement(React.Fragment, null, React.createElement('button', { className: 'btn btn-ghost', onClick: () => setShowCheckItemForm(false) }, '取消'), React.createElement('button', { className: 'btn btn-primary', onClick: createCheckItems }, '儲存'))},
+        React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '選擇教室'), React.createElement('select', { value: newCheckItem.classroom_id, onChange: e => setNewCheckItem(f => ({ ...f, classroom_id: e.target.value })) }, React.createElement('option', { value: '' }, '請選擇教室'), classrooms.map(c => React.createElement('option', { key: c.id, value: c.id }, c.name)))),
         React.createElement('div', { className: 'form-group' },
           React.createElement('label', null, '檢查項目'),
-          newCheckItem.items.map((item, idx) =>
-            React.createElement('div', { key: idx, className: 'flex gap-2 items-center', style: { marginBottom: 8 } },
-              React.createElement('input', { style: { flex: 1 }, placeholder: `項目 ${idx + 1}`, value: item.item_name, onChange: e => setNewCheckItem(f => ({ ...f, items: f.items.map((it, i) => i === idx ? { ...it, item_name: e.target.value } : it) })) })
-            )
-          ),
-          React.createElement('button', { className: 'btn btn-ghost', style: { marginTop: 6 }, onClick: addCheckItemRow }, '+ 新增項目')
+          newCheckItem.items.map((item, idx) => React.createElement('div', { key: idx, className: 'flex gap-2 items-center', style: { marginBottom: 8 } }, React.createElement('input', { style: { flex: 1 }, placeholder: `項目 ${idx+1}`, value: item.item_name, onChange: e => setNewCheckItem(f => ({ ...f, items: f.items.map((it, i) => i===idx ? { ...it, item_name: e.target.value } : it) })) }))),
+          React.createElement('button', { className: 'btn btn-ghost', style: { marginTop: 4 }, onClick: () => setNewCheckItem(f => ({ ...f, items: [...f.items, { item_name: '' }] })) }, '+ 新增項目')
         )
       )
     )
@@ -922,166 +1031,25 @@ function AdminPage({ classes, classrooms, onRefresh }) {
 // ===== DASHBOARD =====
 function Dashboard({ user, classes, classrooms }) {
   const [stats, setStats] = useState({ total: 0, open: 0, equipment: 0, resolved: 0 });
-
   useEffect(() => {
     api('getRecords', { date_from: '2000-01-01' }).then(r => {
       if (r.success && r.data) {
         const d = r.data;
-        setStats({
-          total: d.length,
-          open: d.filter(x => x.status !== 'resolved' && x.type !== 'log').length,
-          equipment: d.filter(x => x.type === 'equipment').length,
-          resolved: d.filter(x => x.status === 'resolved').length,
-        });
+        setStats({ total: d.length, open: d.filter(x => x.status!=='resolved'&&x.type!=='log').length, equipment: d.filter(x=>x.type==='equipment').length, resolved: d.filter(x=>x.status==='resolved').length });
       }
     });
   }, []);
-
   return React.createElement('div', null,
     React.createElement('div', { className: 'stats-grid' },
-      [
-        { label: '總記錄數', value: stats.total, color: '#1e40af' },
-        { label: '待處理', value: stats.open, color: '#d97706' },
-        { label: '設備異常', value: stats.equipment, color: '#0891b2' },
-        { label: '已解決', value: stats.resolved, color: '#16a34a' },
-      ].map(s => React.createElement('div', { key: s.label, className: 'stat-card' },
-        React.createElement('div', { className: 'stat-value', style: { color: s.color } }, s.value),
-        React.createElement('div', { className: 'stat-label' }, s.label)
-      ))
+      [{ label:'總記錄數', value:stats.total, color:'#1e40af' }, { label:'待處理', value:stats.open, color:'#d97706' }, { label:'設備異常', value:stats.equipment, color:'#0891b2' }, { label:'已解決', value:stats.resolved, color:'#16a34a' }].map(s =>
+        React.createElement('div', { key: s.label, className: 'stat-card' }, React.createElement('div', { className: 'stat-value', style: { color: s.color } }, s.value), React.createElement('div', { className: 'stat-label' }, s.label))
+      )
     ),
     React.createElement('div', { className: 'card' },
-      React.createElement('div', { className: 'card-header' },
-        React.createElement('span', { className: 'card-title' }, '歡迎回來，' + user.name)
-      ),
+      React.createElement('div', { className: 'card-header' }, React.createElement('span', { className: 'card-title' }, '歡迎回來，' + user.name + (user.role==='supervisor'?' 👑':''))),
       React.createElement('div', { className: 'card-body' },
-        React.createElement('p', { className: 'text-sm text-muted' }, '角色：', ROLE_MAP[user.role] || user.role),
+        React.createElement('p', { className: 'text-sm text-muted' }, '角色：', ROLE_MAP[user.role]||user.role),
         React.createElement('p', { className: 'text-sm text-muted mt-2' }, '目前系統有 ', React.createElement('strong', null, stats.open), ' 筆記錄待處理')
-      )
-    )
-  );
-}
-
-
-// ===== EXPORT PAGE =====
-function ExportPage({ classes }) {
-  const [filter, setFilter] = useState({
-    date_from: new Date(Date.now() - 30*24*60*60*1000).toISOString().split('T')[0],
-    date_to: new Date().toISOString().split('T')[0],
-    class_id: '',
-    type: ''
-  });
-  const [loading, setLoading] = useState(false);
-  const [preview, setPreview] = useState(null);
-  const [msg, setMsg] = useState('');
-
-  const TYPE_LABEL = { abnormal:'課堂異常處理', counseling:'學員學習輔導紀錄', task:'課程交辦事項', log:'課堂狀況記錄', equipment:'設備異常' };
-
-  async function fetchData() {
-    if (!filter.date_from || !filter.date_to) { setMsg('請選擇日期區間'); return; }
-    setLoading(true); setMsg(''); setPreview(null);
-    const res = await api('exportRecords', filter);
-    setLoading(false);
-    if (res.success) {
-      setPreview(res.data);
-      if (res.data.length === 0) setMsg('查無符合條件的記錄');
-    } else {
-      setMsg(res.message || '查詢失敗');
-    }
-  }
-
-  function exportXLS() {
-    if (!preview || preview.length === 0) return;
-
-    const headers = ['日期','類型','班級','教室','內容','狀態','建立者','建立時間','解決者','解決時間','解決方式'];
-    const rows = preview.map(r => headers.map(h => r[h] || ''));
-
-    // 建立 HTML table 格式的 XLS
-    let html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel">';
-    html += '<head><meta charset="UTF-8"><style>td{mso-number-format:"@";}</style></head><body><table>';
-    html += '<tr>' + headers.map(h => `<th style="background:#1e40af;color:#fff;font-weight:bold;padding:6px;">${h}</th>`).join('') + '</tr>';
-    rows.forEach((row, i) => {
-      const bg = i % 2 === 0 ? '#ffffff' : '#f0f4f8';
-      html += '<tr>' + row.map(cell => `<td style="background:${bg};padding:4px;">${cell}</td>`).join('') + '</tr>';
-    });
-    html += '</table></body></html>';
-
-    const blob = new Blob(['﻿' + html], { type: 'application/vnd.ms-excel;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    const from = filter.date_from.replace(/-/g,'');
-    const to = filter.date_to.replace(/-/g,'');
-    a.download = `交接記錄_${from}_${to}.xls`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  return React.createElement('div', null,
-    React.createElement('div', { className: 'card' },
-      React.createElement('div', { className: 'card-header' },
-        React.createElement('span', { className: 'card-title' }, '📊 匯出交接記錄')
-      ),
-      React.createElement('div', { className: 'card-body' },
-        React.createElement('div', { className: 'form-group' },
-          React.createElement('label', null, '日期區間 *'),
-          React.createElement('div', { className: 'flex gap-2 items-center', style:{flexWrap:'wrap'} },
-            React.createElement('input', { type:'date', value:filter.date_from, onChange:e=>setFilter(f=>({...f,date_from:e.target.value})), style:{flex:1,minWidth:130} }),
-            React.createElement('span', { className:'text-muted' }, '至'),
-            React.createElement('input', { type:'date', value:filter.date_to, onChange:e=>setFilter(f=>({...f,date_to:e.target.value})), style:{flex:1,minWidth:130} })
-          )
-        ),
-        React.createElement('div', { className: 'grid-2' },
-          React.createElement('div', { className:'form-group' },
-            React.createElement('label', null, '班級'),
-            React.createElement('select', { value:filter.class_id, onChange:e=>setFilter(f=>({...f,class_id:e.target.value})) },
-              React.createElement('option', {value:''}, '全部班級'),
-              classes.map(c => React.createElement('option', {key:c.id, value:c.id}, c.name))
-            )
-          ),
-          React.createElement('div', { className:'form-group' },
-            React.createElement('label', null, '記錄類型'),
-            React.createElement('select', { value:filter.type, onChange:e=>setFilter(f=>({...f,type:e.target.value})) },
-              React.createElement('option', {value:''}, '全部類型'),
-              Object.entries(TYPE_LABEL).map(([k,v]) => React.createElement('option', {key:k, value:k}, v))
-            )
-          )
-        ),
-        msg && React.createElement('div', { className: preview && preview.length === 0 ? 'alert alert-error' : 'alert alert-error' }, msg),
-        React.createElement('div', { className:'flex gap-2', style:{flexWrap:'wrap'} },
-          React.createElement('button', { className:'btn btn-primary', onClick:fetchData, disabled:loading },
-            loading ? React.createElement('span', null, React.createElement('span',{className:'spinner'}), '查詢中...') : '🔍 查詢預覽'
-          ),
-          preview && preview.length > 0 && React.createElement('button', { className:'btn btn-success', onClick:exportXLS },
-            '⬇ 匯出 XLS（' + preview.length + ' 筆）'
-          )
-        )
-      )
-    ),
-
-    preview && preview.length > 0 && React.createElement('div', { className:'card' },
-      React.createElement('div', { className:'card-header' },
-        React.createElement('span', { className:'card-title' }, '預覽（前20筆）'),
-        React.createElement('span', { className:'text-sm text-muted' }, `共 ${preview.length} 筆`)
-      ),
-      React.createElement('div', { style:{overflowX:'auto'} },
-        React.createElement('table', { style:{width:'100%',borderCollapse:'collapse',fontSize:12} },
-          React.createElement('thead', null,
-            React.createElement('tr', { style:{background:'#f0f4f8'} },
-              ['日期','類型','班級','教室','內容','狀態'].map(h =>
-                React.createElement('th', {key:h, style:{padding:'8px 10px',textAlign:'left',fontWeight:700,color:'#475569',borderBottom:'1px solid #e2e8f0',whiteSpace:'nowrap'}}, h)
-              )
-            )
-          ),
-          React.createElement('tbody', null,
-            preview.slice(0,20).map((r,i) =>
-              React.createElement('tr', {key:i, style:{borderBottom:'1px solid #f1f5f9'}},
-                ['日期','類型','班級','教室','內容','狀態'].map(h =>
-                  React.createElement('td', {key:h, style:{padding:'7px 10px',color:'#1e293b',maxWidth:h==='內容'?180:undefined,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:h==='內容'?'nowrap':'nowrap'}}, r[h]||'')
-                )
-              )
-            )
-          )
-        )
       )
     )
   );
@@ -1093,6 +1061,8 @@ function App() {
   const [page, setPage] = useState('dashboard');
   const [classes, setClasses] = useState([]);
   const [classrooms, setClassrooms] = useState([]);
+  const [announcements, setAnnouncements] = useState([]);
+  const [showAnnounce, setShowAnnounce] = useState(false);
 
   async function loadMeta() {
     const [c, r] = await Promise.all([api('getClasses'), api('getClassrooms')]);
@@ -1100,42 +1070,54 @@ function App() {
     if (r.success) setClassrooms(r.data || []);
   }
 
-  useEffect(() => { if (user) loadMeta(); }, [user]);
+  async function checkAnnouncements(u) {
+    const res = await api('getAnnouncements', {});
+    if (res.success && res.data) {
+      const pending = res.data.filter(a => {
+        const c = (a.confirms||[]).find(c => c.user_id === u.id);
+        return !c || !c.acknowledged_at;
+      });
+      setAnnouncements(res.data);
+      if (pending.length > 0) setShowAnnounce(true);
+    }
+  }
+
+  useEffect(() => { if (user) { loadMeta(); checkAnnouncements(user); } }, [user]);
 
   if (!user) return React.createElement(Login, { onLogin: u => { setUser(u); setPage('dashboard'); } });
 
-  const isAdmin = user.role === 'admin';
-  const canExport = user.role === 'admin' || user.role === 'supervisor';
+  const isAdmin    = user.role === 'admin';
+  const canExport  = canManage(user.role);
 
   const navItems = [
-    { key: 'dashboard', icon: '🏠', label: '總覽', show: true },
-    { key: 'records', icon: '📋', label: '交接', show: true },
-    { key: 'check', icon: '✅', label: '課前課後', show: true },
-    { key: 'export', icon: '📊', label: '匯出', show: canExport },
-    { key: 'admin', icon: '⚙️', label: '管理', show: isAdmin },
-    { key: 'logout', icon: '🚪', label: '登出', show: true },
+    { key: 'dashboard', icon: '🏠', label: '總覽',     show: true },
+    { key: 'records',   icon: '📋', label: '交接',     show: true },
+    { key: 'check',     icon: '✅', label: '課前課後', show: true },
+    { key: 'announce',  icon: '📢', label: '公告',     show: true },
+    { key: 'checkrec',   icon: '🏁', label: '檢查紀錄', show: canExport },
+    { key: 'export',    icon: '📊', label: '匯出',     show: canExport },
+    { key: 'admin',     icon: '⚙️', label: '管理',     show: isAdmin },
+    { key: 'logout',    icon: '🚪', label: '登出',     show: true },
   ];
 
-  const titles = { dashboard: '總覽', records: '交接記錄', check: '課前課後檢查', export: '匯出記錄', admin: '系統管理' };
+  const titles = { dashboard:'總覽', records:'交接記錄', check:'課前課後檢查', announce:'推播公告', checkrec:'課前課後檢查紀錄', export:'匯出記錄', admin:'系統管理' };
 
-  function handleNav(key) {
-    if (key === 'logout') { setUser(null); return; }
-    setPage(key);
-  }
+  function handleNav(key) { if (key === 'logout') { setUser(null); return; } setPage(key); }
+
+  const roleLabel = ROLE_MAP[user.role] || user.role;
+  const isSupervisor = user.role === 'supervisor';
 
   return React.createElement('div', { className: 'app' },
+    showAnnounce && React.createElement(AnnouncementModal, { announcements, user, onDone: () => setShowAnnounce(false) }),
     React.createElement('div', { className: 'sidebar' },
       React.createElement('div', { className: 'sidebar-header' },
         React.createElement('h2', null, '🏫 多元職能推廣協會'),
         React.createElement('p', null, '交接系統')
       ),
       React.createElement('nav', { className: 'sidebar-nav' },
-        React.createElement('div', { className: 'nav-section' },
-          navItems.filter(n => n.show && n.key !== 'logout').map(n =>
-            React.createElement('div', { key: n.key, className: `nav-item ${page === n.key ? 'active' : ''}`, onClick: () => setPage(n.key) },
-              React.createElement('span', { className: 'nav-icon' }, n.icon),
-              n.label
-            )
+        navItems.filter(n => n.show && n.key !== 'logout').map(n =>
+          React.createElement('div', { key: n.key, className: `nav-item ${page===n.key?'active':''}`, onClick: () => setPage(n.key) },
+            React.createElement('span', { className: 'nav-icon' }, n.icon), n.label
           )
         )
       ),
@@ -1143,36 +1125,38 @@ function App() {
         React.createElement('div', { className: 'user-info' },
           React.createElement('div', { className: 'user-avatar' }, user.name[0]),
           React.createElement('div', null,
-            React.createElement('div', { className: 'user-name' }, user.name),
-            React.createElement('div', { className: 'user-role' }, ROLE_MAP[user.role] || user.role)
+            React.createElement('div', { className: 'user-name' }, user.name, isSupervisor && React.createElement('span', null, '👑')),
+            React.createElement('div', { className: 'user-role' }, roleLabel)
           )
         ),
-        React.createElement('div', { className: 'nav-item', style: { marginTop: 4 }, onClick: () => setUser(null) },
-          React.createElement('span', { className: 'nav-icon' }, '🚪'), '登出'
-        )
+        React.createElement('div', { className: 'nav-item', style: { marginTop: 4 }, onClick: () => setUser(null) }, React.createElement('span', { className: 'nav-icon' }, '🚪'), '登出')
       )
     ),
     React.createElement('div', { className: 'main' },
       React.createElement('div', { className: 'topbar' },
         React.createElement('div', null,
           React.createElement('h1', null, titles[page] || ''),
-          React.createElement('p', { className: 'text-sm text-muted', style:{marginTop:2} }, '多元職能推廣協會')
+          React.createElement('p', { className: 'text-sm text-muted', style: { marginTop: 2 } }, '多元職能推廣協會')
         ),
-        React.createElement('div', { className: 'user-avatar', style:{background:'#e0e7ff',color:'#1e40af',width:34,height:34,fontSize:14} }, user.name[0])
+        React.createElement('div', { style: { display:'flex', alignItems:'center', gap:6 } },
+          React.createElement('div', { className: 'user-avatar', style: { background:'#e0e7ff', color:'#1e40af', width:34, height:34, fontSize:14 } }, user.name[0]),
+          isSupervisor && React.createElement('span', { style: { fontSize: 16 } }, '👑')
+        )
       ),
       React.createElement('div', { className: 'content' },
         page === 'dashboard' && React.createElement(Dashboard, { user, classes, classrooms }),
-        page === 'records' && React.createElement(RecordsPage, { user, classes, classrooms }),
-        page === 'check' && React.createElement(CheckPage, { user, classrooms }),
-        page === 'export' && canExport && React.createElement(ExportPage, { classes }),
-        page === 'admin' && isAdmin && React.createElement(AdminPage, { classes, classrooms, onRefresh: loadMeta })
+        page === 'records'   && React.createElement(RecordsPage, { user, classes, classrooms }),
+        page === 'check'     && React.createElement(CheckPage, { user, classrooms }),
+        page === 'announce'  && React.createElement(AnnouncePage, { user, classes }),
+        page === 'checkrec'  && canExport && React.createElement(CheckRecordsPage, { classrooms }),
+        page === 'export'    && canExport && React.createElement(ExportPage, { classes }),
+        page === 'admin'     && isAdmin && React.createElement(AdminPage, { classes, classrooms, onRefresh: loadMeta })
       )
     ),
     React.createElement('nav', { className: 'bottom-nav' },
       navItems.filter(n => n.show).map(n =>
-        React.createElement('button', { key: n.key, className: `bottom-nav-item ${page === n.key ? 'active' : ''}`, onClick: () => handleNav(n.key) },
-          React.createElement('span', { className: 'bnav-icon' }, n.icon),
-          n.label
+        React.createElement('button', { key: n.key, className: `bottom-nav-item ${page===n.key?'active':''}`, onClick: () => handleNav(n.key) },
+          React.createElement('span', { className: 'bnav-icon' }, n.icon), n.label
         )
       )
     )
