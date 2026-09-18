@@ -939,8 +939,8 @@ function ExportPage({ classes }) {
 }
 
 // ===== ADMIN PAGE =====
-function AdminPage({ classes, classrooms, onRefresh }) {
-  const [tab, setTab] = useState('users');
+function AdminPage({ classes, classrooms, onRefresh, isAdmin }) {
+  const [tab, setTab] = useState(isAdmin ? 'users' : 'classes');
   const [users, setUsers] = useState([]);
   const [usersLoading, setUsersLoading] = useState(false);
   const [showUserForm, setShowUserForm] = useState(false);
@@ -1047,11 +1047,11 @@ function AdminPage({ classes, classrooms, onRefresh }) {
 
   return React.createElement('div', null,
     React.createElement('div', { className: 'tabs', style: { marginBottom: 14 } },
-      [['users','帳號'],['classes','班級'],['classrooms','教室'],['checkitems','檢查項目']].map(([k,l]) =>
+      (isAdmin ? [['users','帳號'],['classes','班級'],['classrooms','教室'],['checkitems','檢查項目']] : [['classes','班級'],['classrooms','教室'],['checkitems','檢查項目']]).map(([k,l]) =>
         React.createElement('button', { key: k, className: `tab ${tab===k?'active':''}`, onClick: () => setTab(k) }, l)
       )
     ),
-    tab === 'users' && React.createElement('div', null,
+    tab === 'users' && isAdmin && React.createElement('div', null,
       React.createElement('div', { className: 'flex justify-between items-center', style: { marginBottom: 10 } },
         React.createElement('div', { className: 'flex gap-2 items-center' },
           React.createElement('span', { className: 'text-sm text-muted' }, usersLoading ? '載入中...' : `共 ${users.length} 個帳號`),
@@ -1380,6 +1380,7 @@ function App() {
   if (!user) return React.createElement(Login, { onLogin: u => { setUser(u); setPage('dashboard'); } });
 
   const isAdmin    = user.role === 'admin';
+  const isSupervisorOrAdmin = canManage(user.role);
   const canExport  = canManage(user.role);
 
   const navItems = [
@@ -1389,7 +1390,7 @@ function App() {
     { key: 'announce',  icon: '📢', label: '公告',     show: true },
     { key: 'checkrec',   icon: '🏁', label: '檢查紀錄', show: canExport },
     { key: 'export',    icon: '📊', label: '匯出',     show: canExport },
-    { key: 'admin',     icon: '⚙️', label: '管理',     show: isAdmin },
+    { key: 'admin',     icon: '⚙️', label: '管理',     show: isSupervisorOrAdmin },
     { key: 'logout',    icon: '🚪', label: '登出',     show: true },
   ];
 
@@ -1443,7 +1444,7 @@ function App() {
         page === 'announce'  && React.createElement(AnnouncePage, { user, classes }),
         page === 'checkrec'  && canExport && React.createElement(CheckRecordsPage, { classrooms }),
         page === 'export'    && canExport && React.createElement(ExportPage, { classes }),
-        page === 'admin'     && isAdmin && React.createElement(AdminPage, { classes, classrooms, onRefresh: loadMeta })
+        page === 'admin'     && isSupervisorOrAdmin && React.createElement(AdminPage, { classes, classrooms, onRefresh: loadMeta, isAdmin })
       )
     ),
     React.createElement('nav', { className: 'bottom-nav' },
