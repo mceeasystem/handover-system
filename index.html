@@ -946,8 +946,15 @@ function AdminPage({ classes, classrooms, onRefresh }) {
   const [showUserForm, setShowUserForm] = useState(false);
   const [editUser, setEditUser] = useState(null);
   const [showClassForm, setShowClassForm] = useState(false);
+  const [editClass, setEditClass] = useState(null);
+  const [editClassForm, setEditClassForm] = useState({ name: '', description: '', active: true });
   const [showRoomForm, setShowRoomForm] = useState(false);
+  const [editRoom, setEditRoom] = useState(null);
+  const [editRoomForm, setEditRoomForm] = useState({ name: '', description: '', active: true });
   const [showCheckItemForm, setShowCheckItemForm] = useState(false);
+  const [editCheckItems, setEditCheckItems] = useState(null);
+  const [checkItemsData, setCheckItemsData] = useState([]);
+  const [checkItemsLoading, setCheckItemsLoading] = useState(false);
   const [newUser, setNewUser] = useState({ name: '', email: '', password: '', role: 'assistant' });
   const [editForm, setEditForm] = useState({ name: '', email: '', role: '', active: true, password: '' });
   const [newClass, setNewClass] = useState({ name: '', description: '' });
@@ -1002,6 +1009,36 @@ function AdminPage({ classes, classrooms, onRefresh }) {
     if (!newCheckItem.classroom_id || validItems.length === 0) { setMsg('請選擇教室並填寫至少一個項目'); return; }
     const res = await api('createCheckItems', { classroom_id: newCheckItem.classroom_id, items: validItems });
     if (res.success) { setShowCheckItemForm(false); setNewCheckItem({ classroom_id: '', items: [{ item_name: '' }] }); setMsg(''); }
+  }
+
+  async function saveEditClass() {
+    if (!editClassForm.name) return;
+    await api('updateClass', { id: editClass.id, name: editClassForm.name, description: editClassForm.description, active: editClassForm.active });
+    setEditClass(null); onRefresh();
+  }
+
+  async function saveEditRoom() {
+    if (!editRoomForm.name) return;
+    await api('updateClassroom', { id: editRoom.id, name: editRoomForm.name, description: editRoomForm.description, active: editRoomForm.active });
+    setEditRoom(null); onRefresh();
+  }
+
+  async function loadCheckItemsForEdit(room) {
+    setEditCheckItems(room); setCheckItemsLoading(true);
+    const res = await api('getCheckItems', { classroom_id: room.id });
+    setCheckItemsLoading(false);
+    if (res.success) setCheckItemsData(res.data || []);
+  }
+
+  async function updateCheckItem(item, changes) {
+    await api('updateCheckItem', { id: item.id, ...changes });
+    loadCheckItemsForEdit(editCheckItems);
+  }
+
+  async function addCheckItem(item_name) {
+    if (!item_name.trim()) return;
+    await api('createCheckItems', { classroom_id: editCheckItems.id, items: [{ item_name }] });
+    loadCheckItemsForEdit(editCheckItems);
   }
 
   function isUserActive(u) {
@@ -1112,30 +1149,172 @@ function AdminPage({ classes, classrooms, onRefresh }) {
       )
     ),
     tab === 'classes' && React.createElement('div', null,
-      React.createElement('div', { className: 'flex justify-between items-center', style: { marginBottom: 10 } }, React.createElement('span', { className: 'text-sm text-muted' }, `共 ${classes.length} 個班級`), React.createElement('button', { className: 'btn btn-primary', style: { fontSize: 13, padding: '8px 14px' }, onClick: () => setShowClassForm(true) }, '+ 新增班級')),
-      React.createElement('div', { className: 'record-list' }, classes.map(c => React.createElement('div', { key: c.id, className: 'card' }, React.createElement('div', { className: 'card-body', style: { padding: '12px 16px' } }, React.createElement('span', { style: { fontWeight: 600 } }, c.name), c.description && React.createElement('span', { className: 'text-muted text-sm', style: { marginLeft: 8 } }, c.description))))),
-      showClassForm && React.createElement(Modal, { title: '新增班級', onClose: () => setShowClassForm(false), footer: React.createElement(React.Fragment, null, React.createElement('button', { className: 'btn btn-ghost', onClick: () => setShowClassForm(false) }, '取消'), React.createElement('button', { className: 'btn btn-primary', onClick: createClass }, '新增'))},
+      React.createElement('div', { className: 'flex justify-between items-center', style: { marginBottom: 10 } },
+        React.createElement('span', { className: 'text-sm text-muted' }, `共 ${classes.length} 個班級`),
+        React.createElement('button', { className: 'btn btn-primary', style: { fontSize: 13, padding: '8px 14px' }, onClick: () => setShowClassForm(true) }, '+ 新增班級')
+      ),
+      React.createElement('div', { className: 'record-list' },
+        classes.map(c => {
+          const active = c.active === true || c.active === 'TRUE' || String(c.active).toUpperCase() === 'TRUE';
+          return React.createElement('div', { key: c.id, className: 'card' },
+            React.createElement('div', { className: 'card-body', style: { padding: '12px 16px' } },
+              React.createElement('div', { className: 'flex justify-between items-center' },
+                React.createElement('div', null,
+                  React.createElement('span', { style: { fontWeight: 600 } }, c.name),
+                  c.description && React.createElement('span', { className: 'text-muted text-sm', style: { marginLeft: 8 } }, c.description),
+                  React.createElement('span', { className: 'badge ' + (active ? 'badge-resolved' : 'badge-open'), style: { marginLeft: 8 } }, active ? '啟用' : '停用')
+                ),
+                React.createElement('button', { className: 'btn btn-ghost', style: { fontSize: 12, padding: '5px 10px' }, onClick: () => { setEditClassForm({ name: c.name, description: c.description || '', active }); setEditClass(c); } }, '✏️ 編輯')
+              )
+            )
+          );
+        })
+      ),
+      showClassForm && React.createElement(Modal, { title: '新增班級', onClose: () => setShowClassForm(false),
+        footer: React.createElement(React.Fragment, null,
+          React.createElement('button', { className: 'btn btn-ghost', onClick: () => setShowClassForm(false) }, '取消'),
+          React.createElement('button', { className: 'btn btn-primary', onClick: createClass }, '新增')
+        )},
         React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '班級名稱'), React.createElement('input', { value: newClass.name, onChange: e => setNewClass(f => ({ ...f, name: e.target.value })) })),
         React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '說明'), React.createElement('input', { value: newClass.description, onChange: e => setNewClass(f => ({ ...f, description: e.target.value })) }))
+      ),
+      editClass && React.createElement(Modal, { title: '編輯班級：' + editClass.name, onClose: () => setEditClass(null),
+        footer: React.createElement(React.Fragment, null,
+          React.createElement('button', { className: 'btn btn-ghost', onClick: () => setEditClass(null) }, '取消'),
+          React.createElement('button', { className: 'btn btn-primary', onClick: saveEditClass }, '💾 儲存')
+        )},
+        React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '班級名稱 *'), React.createElement('input', { value: editClassForm.name, onChange: e => setEditClassForm(f => ({ ...f, name: e.target.value })) })),
+        React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '說明'), React.createElement('input', { value: editClassForm.description, onChange: e => setEditClassForm(f => ({ ...f, description: e.target.value })) })),
+        React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '狀態'),
+          React.createElement('select', { value: editClassForm.active ? 'true' : 'false', onChange: e => setEditClassForm(f => ({ ...f, active: e.target.value === 'true' })) },
+            React.createElement('option', { value: 'true' }, '啟用'),
+            React.createElement('option', { value: 'false' }, '停用')
+          )
+        )
       )
     ),
+
     tab === 'classrooms' && React.createElement('div', null,
-      React.createElement('div', { className: 'flex justify-between items-center', style: { marginBottom: 10 } }, React.createElement('span', { className: 'text-sm text-muted' }, `共 ${classrooms.length} 個教室`), React.createElement('button', { className: 'btn btn-primary', style: { fontSize: 13, padding: '8px 14px' }, onClick: () => setShowRoomForm(true) }, '+ 新增教室')),
-      React.createElement('div', { className: 'record-list' }, classrooms.map(c => React.createElement('div', { key: c.id, className: 'card' }, React.createElement('div', { className: 'card-body', style: { padding: '12px 16px' } }, React.createElement('span', { style: { fontWeight: 600 } }, c.name), c.description && React.createElement('span', { className: 'text-muted text-sm', style: { marginLeft: 8 } }, c.description))))),
-      showRoomForm && React.createElement(Modal, { title: '新增教室', onClose: () => setShowRoomForm(false), footer: React.createElement(React.Fragment, null, React.createElement('button', { className: 'btn btn-ghost', onClick: () => setShowRoomForm(false) }, '取消'), React.createElement('button', { className: 'btn btn-primary', onClick: createRoom }, '新增'))},
+      React.createElement('div', { className: 'flex justify-between items-center', style: { marginBottom: 10 } },
+        React.createElement('span', { className: 'text-sm text-muted' }, `共 ${classrooms.length} 個教室`),
+        React.createElement('button', { className: 'btn btn-primary', style: { fontSize: 13, padding: '8px 14px' }, onClick: () => setShowRoomForm(true) }, '+ 新增教室')
+      ),
+      React.createElement('div', { className: 'record-list' },
+        classrooms.map(c => {
+          const active = c.active === true || c.active === 'TRUE' || String(c.active).toUpperCase() === 'TRUE';
+          return React.createElement('div', { key: c.id, className: 'card' },
+            React.createElement('div', { className: 'card-body', style: { padding: '12px 16px' } },
+              React.createElement('div', { className: 'flex justify-between items-center' },
+                React.createElement('div', null,
+                  React.createElement('span', { style: { fontWeight: 600 } }, c.name),
+                  c.description && React.createElement('span', { className: 'text-muted text-sm', style: { marginLeft: 8 } }, c.description),
+                  React.createElement('span', { className: 'badge ' + (active ? 'badge-resolved' : 'badge-open'), style: { marginLeft: 8 } }, active ? '啟用' : '停用')
+                ),
+                React.createElement('div', { className: 'flex gap-2' },
+                  React.createElement('button', { className: 'btn btn-ghost', style: { fontSize: 12, padding: '5px 10px' }, onClick: () => { setEditRoomForm({ name: c.name, description: c.description || '', active }); setEditRoom(c); } }, '✏️ 編輯'),
+                  React.createElement('button', { className: 'btn btn-ghost', style: { fontSize: 12, padding: '5px 10px', color: 'var(--primary)' }, onClick: () => loadCheckItemsForEdit(c) }, '📋 檢查項目')
+                )
+              )
+            )
+          );
+        })
+      ),
+      showRoomForm && React.createElement(Modal, { title: '新增教室', onClose: () => setShowRoomForm(false),
+        footer: React.createElement(React.Fragment, null,
+          React.createElement('button', { className: 'btn btn-ghost', onClick: () => setShowRoomForm(false) }, '取消'),
+          React.createElement('button', { className: 'btn btn-primary', onClick: createRoom }, '新增')
+        )},
         React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '教室名稱'), React.createElement('input', { value: newRoom.name, onChange: e => setNewRoom(f => ({ ...f, name: e.target.value })) })),
         React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '說明'), React.createElement('input', { value: newRoom.description, onChange: e => setNewRoom(f => ({ ...f, description: e.target.value })) }))
+      ),
+      editRoom && React.createElement(Modal, { title: '編輯教室：' + editRoom.name, onClose: () => setEditRoom(null),
+        footer: React.createElement(React.Fragment, null,
+          React.createElement('button', { className: 'btn btn-ghost', onClick: () => setEditRoom(null) }, '取消'),
+          React.createElement('button', { className: 'btn btn-primary', onClick: saveEditRoom }, '💾 儲存')
+        )},
+        React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '教室名稱 *'), React.createElement('input', { value: editRoomForm.name, onChange: e => setEditRoomForm(f => ({ ...f, name: e.target.value })) })),
+        React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '說明'), React.createElement('input', { value: editRoomForm.description, onChange: e => setEditRoomForm(f => ({ ...f, description: e.target.value })) })),
+        React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '狀態'),
+          React.createElement('select', { value: editRoomForm.active ? 'true' : 'false', onChange: e => setEditRoomForm(f => ({ ...f, active: e.target.value === 'true' })) },
+            React.createElement('option', { value: 'true' }, '啟用'),
+            React.createElement('option', { value: 'false' }, '停用')
+          )
+        )
+      ),
+      editCheckItems && React.createElement(Modal, { title: '📋 ' + editCheckItems.name + ' — 檢查項目', onClose: () => setEditCheckItems(null),
+        footer: React.createElement('button', { className: 'btn btn-ghost', onClick: () => setEditCheckItems(null) }, '關閉')
+        },
+        checkItemsLoading
+          ? React.createElement('div', { className: 'loading' }, React.createElement('span', { className: 'spinner' }), '載入中...')
+          : React.createElement('div', null,
+              checkItemsData.length === 0
+                ? React.createElement('div', { className: 'empty', style: { padding: 20 } }, React.createElement('p', null, '尚無檢查項目'))
+                : checkItemsData.map((item, idx) =>
+                    React.createElement('div', { key: item.id, className: 'check-item' },
+                      React.createElement('span', { className: 'check-item-name', style: { fontSize: 14 } }, item.item_name),
+                      React.createElement('div', { className: 'flex gap-2' },
+                        React.createElement('span', {
+                          style: { fontSize: 11, padding: '2px 8px', borderRadius: 20, fontWeight: 600,
+                            background: (item.active===true||String(item.active).toUpperCase()==='TRUE') ? 'var(--success-pale)' : 'var(--danger-pale)',
+                            color: (item.active===true||String(item.active).toUpperCase()==='TRUE') ? 'var(--success)' : 'var(--danger)'
+                          }
+                        }, (item.active===true||String(item.active).toUpperCase()==='TRUE') ? '啟用' : '停用'),
+                        React.createElement('button', {
+                          style: { background: 'none', border: 'none', cursor: 'pointer', fontSize: 12, color: 'var(--warning)', fontWeight: 600, padding: '2px 6px' },
+                          onClick: () => updateCheckItem(item, { active: !(item.active===true||String(item.active).toUpperCase()==='TRUE') })
+                        }, (item.active===true||String(item.active).toUpperCase()==='TRUE') ? '停用' : '啟用')
+                      )
+                    )
+                  ),
+              React.createElement('div', { className: 'divider' }),
+              React.createElement('p', { style: { fontSize: 13, fontWeight: 600, marginBottom: 8 } }, '新增項目'),
+              React.createElement('div', { className: 'flex gap-2' },
+                React.createElement('input', {
+                  id: 'new-check-item-input',
+                  style: { flex: 1, padding: '8px 12px', border: '1.5px solid var(--border)', borderRadius: 'var(--radius)', fontSize: 14 },
+                  placeholder: '輸入項目名稱',
+                  onKeyDown: e => { if (e.key === 'Enter') { addCheckItem(e.target.value); e.target.value = ''; } }
+                }),
+                React.createElement('button', {
+                  className: 'btn btn-primary',
+                  style: { fontSize: 13 },
+                  onClick: () => {
+                    const inp = document.getElementById('new-check-item-input');
+                    if (inp) { addCheckItem(inp.value); inp.value = ''; }
+                  }
+                }, '新增')
+              )
+            )
       )
     ),
+
     tab === 'checkitems' && React.createElement('div', null,
-      React.createElement('div', { className: 'flex justify-between items-center', style: { marginBottom: 10 } }, React.createElement('span', { className: 'text-sm text-muted' }, '為各教室設定課前課後檢查項目'), React.createElement('button', { className: 'btn btn-primary', style: { fontSize: 13, padding: '8px 14px' }, onClick: () => setShowCheckItemForm(true) }, '+ 新增項目')),
+      React.createElement('div', { className: 'flex justify-between items-center', style: { marginBottom: 10 } },
+        React.createElement('span', { className: 'text-sm text-muted' }, '為各教室批次新增課前課後檢查項目'),
+        React.createElement('button', { className: 'btn btn-primary', style: { fontSize: 13, padding: '8px 14px' }, onClick: () => setShowCheckItemForm(true) }, '+ 批次新增')
+      ),
+      React.createElement('div', { className: 'alert alert-info' }, '💡 也可在「教室」頁籤點「📋 檢查項目」按鈕，針對單一教室管理項目（啟用/停用/新增）'),
       msg && React.createElement('div', { className: 'alert alert-error' }, msg),
-      showCheckItemForm && React.createElement(Modal, { title: '新增教室檢查項目', onClose: () => setShowCheckItemForm(false), footer: React.createElement(React.Fragment, null, React.createElement('button', { className: 'btn btn-ghost', onClick: () => setShowCheckItemForm(false) }, '取消'), React.createElement('button', { className: 'btn btn-primary', onClick: createCheckItems }, '儲存'))},
-        React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '選擇教室'), React.createElement('select', { value: newCheckItem.classroom_id, onChange: e => setNewCheckItem(f => ({ ...f, classroom_id: e.target.value })) }, React.createElement('option', { value: '' }, '請選擇教室'), classrooms.map(c => React.createElement('option', { key: c.id, value: c.id }, c.name)))),
+      showCheckItemForm && React.createElement(Modal, { title: '批次新增教室檢查項目', onClose: () => setShowCheckItemForm(false),
+        footer: React.createElement(React.Fragment, null,
+          React.createElement('button', { className: 'btn btn-ghost', onClick: () => setShowCheckItemForm(false) }, '取消'),
+          React.createElement('button', { className: 'btn btn-primary', onClick: createCheckItems }, '儲存')
+        )},
+        React.createElement('div', { className: 'form-group' },
+          React.createElement('label', null, '選擇教室'),
+          React.createElement('select', { value: newCheckItem.classroom_id, onChange: e => setNewCheckItem(f => ({ ...f, classroom_id: e.target.value })) },
+            React.createElement('option', { value: '' }, '請選擇教室'),
+            classrooms.map(c => React.createElement('option', { key: c.id, value: c.id }, c.name))
+          )
+        ),
         React.createElement('div', { className: 'form-group' },
           React.createElement('label', null, '檢查項目'),
-          newCheckItem.items.map((item, idx) => React.createElement('div', { key: idx, className: 'flex gap-2 items-center', style: { marginBottom: 8 } }, React.createElement('input', { style: { flex: 1 }, placeholder: `項目 ${idx+1}`, value: item.item_name, onChange: e => setNewCheckItem(f => ({ ...f, items: f.items.map((it, i) => i===idx ? { ...it, item_name: e.target.value } : it) })) }))),
-          React.createElement('button', { className: 'btn btn-ghost', style: { marginTop: 4 }, onClick: () => setNewCheckItem(f => ({ ...f, items: [...f.items, { item_name: '' }] })) }, '+ 新增項目')
+          newCheckItem.items.map((item, idx) =>
+            React.createElement('div', { key: idx, className: 'flex gap-2 items-center', style: { marginBottom: 8 } },
+              React.createElement('input', { style: { flex: 1 }, placeholder: `項目 ${idx+1}`, value: item.item_name, onChange: e => setNewCheckItem(f => ({ ...f, items: f.items.map((it, i) => i===idx ? { ...it, item_name: e.target.value } : it) })) })
+            )
+          ),
+          React.createElement('button', { className: 'btn btn-ghost', style: { marginTop: 4 }, onClick: () => setNewCheckItem(f => ({ ...f, items: [...f.items, { item_name: '' }] })) }, '+ 新增一行')
         )
       )
     )
