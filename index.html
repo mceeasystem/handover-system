@@ -944,28 +944,37 @@ function AdminPage({ classes, classrooms, onRefresh }) {
   const [users, setUsers] = useState([]);
   const [usersLoading, setUsersLoading] = useState(false);
   const [showUserForm, setShowUserForm] = useState(false);
+  const [editUser, setEditUser] = useState(null);
   const [showClassForm, setShowClassForm] = useState(false);
   const [showRoomForm, setShowRoomForm] = useState(false);
   const [showCheckItemForm, setShowCheckItemForm] = useState(false);
   const [newUser, setNewUser] = useState({ name: '', email: '', password: '', role: 'assistant' });
+  const [editForm, setEditForm] = useState({ name: '', email: '', role: '', active: true, password: '' });
   const [newClass, setNewClass] = useState({ name: '', description: '' });
   const [newRoom, setNewRoom] = useState({ name: '', description: '' });
   const [newCheckItem, setNewCheckItem] = useState({ classroom_id: '', items: [{ item_name: '' }] });
   const [msg, setMsg] = useState('');
   const [userMsg, setUserMsg] = useState('');
+  const [editMsg, setEditMsg] = useState('');
+  const [editLoading, setEditLoading] = useState(false);
 
   async function loadUsers() {
     setUsersLoading(true);
     const r = await api('getUsers');
     setUsersLoading(false);
     if (r.success) {
-      // 過濾掉說明列（id 為空或以 # 開頭）和無效資料
       const valid = (r.data || []).filter(u => u.id && u.id !== '' && !String(u.id).startsWith('#') && u.name && u.email);
       setUsers(valid);
     }
   }
 
   useEffect(() => { loadUsers(); }, []);
+
+  function openEdit(u) {
+    setEditForm({ name: u.name, email: u.email, role: u.role, active: isUserActive(u), password: '' });
+    setEditMsg('');
+    setEditUser(u);
+  }
 
   async function createUser() {
     if (!newUser.name || !newUser.email || !newUser.password) { setUserMsg('請填寫所有欄位'); return; }
@@ -974,6 +983,18 @@ function AdminPage({ classes, classrooms, onRefresh }) {
     if (res.success) { setShowUserForm(false); setNewUser({ name: '', email: '', password: '', role: 'assistant' }); loadUsers(); }
     else setUserMsg(res.message || '新增失敗');
   }
+
+  async function saveEditUser() {
+    if (!editForm.name || !editForm.email) { setEditMsg('姓名與 Email 為必填'); return; }
+    setEditLoading(true); setEditMsg('');
+    const payload = { id: editUser.id, name: editForm.name, email: editForm.email, role: editForm.role, active: editForm.active };
+    if (editForm.password) payload.password = editForm.password;
+    const res = await api('updateUser', payload);
+    setEditLoading(false);
+    if (res.success) { setEditUser(null); loadUsers(); }
+    else setEditMsg(res.message || '更新失敗');
+  }
+
   async function createClass() { const res = await api('createClass', newClass); if (res.success) { setShowClassForm(false); setNewClass({ name: '', description: '' }); onRefresh(); } }
   async function createRoom() { const res = await api('createClassroom', newRoom); if (res.success) { setShowRoomForm(false); setNewRoom({ name: '', description: '' }); onRefresh(); } }
   async function createCheckItems() {
@@ -1005,24 +1026,89 @@ function AdminPage({ classes, classrooms, onRefresh }) {
         ? React.createElement('div', { className: 'loading' }, React.createElement('span', { className: 'spinner' }), '載入帳號中...')
         : users.length === 0
         ? React.createElement('div', { className: 'empty' }, React.createElement('div', { className: 'empty-icon' }, '👥'), React.createElement('p', null, '尚無帳號資料，請點重新整理'))
-        : React.createElement('div', { className: 'card' },
-            React.createElement('div', { style: { overflowX: 'auto' } },
-              React.createElement('table', { style: { width: '100%', borderCollapse: 'collapse' } },
-                React.createElement('thead', null, React.createElement('tr', { style: { background: '#f8fafc' } }, ['姓名','Email','角色','狀態'].map(h => React.createElement('th', { key: h, style: { padding: '10px 14px', textAlign: 'left', fontSize: 13, fontWeight: 700, color: '#475569', borderBottom: '1px solid #e2e8f0' } }, h)))),
-                React.createElement('tbody', null, users.map(u => React.createElement('tr', { key: u.id, style: { borderBottom: '1px solid #f1f5f9' } },
-                  React.createElement('td', { style: { padding: '10px 14px', fontSize: 14, fontWeight: 500 } }, u.name, u.role === 'supervisor' ? ' 👑' : ''),
-                  React.createElement('td', { style: { padding: '10px 14px', fontSize: 12, color: '#475569' } }, u.email),
-                  React.createElement('td', { style: { padding: '10px 14px' } }, React.createElement('span', { className: 'badge badge-log' }, ROLE_MAP[u.role] || u.role)),
-                  React.createElement('td', { style: { padding: '10px 14px' } }, isUserActive(u) ? React.createElement('span', { className: 'badge badge-resolved' }, '啟用') : React.createElement('span', { className: 'badge badge-open' }, '停用'))
-                )))
+        : React.createElement('div', { className: 'record-list' },
+            users.map(u => React.createElement('div', { key: u.id, className: 'card' },
+              React.createElement('div', { className: 'card-body', style: { padding: '12px 16px' } },
+                React.createElement('div', { className: 'flex justify-between items-center' },
+                  React.createElement('div', null,
+                    React.createElement('div', { style: { fontWeight: 700, fontSize: 15, marginBottom: 4 } },
+                      u.name, u.role === 'supervisor' ? ' 👑' : ''
+                    ),
+                    React.createElement('div', { style: { fontSize: 12, color: 'var(--text-2)', marginBottom: 4 } }, u.email),
+                    React.createElement('div', { className: 'flex gap-2', style: { marginTop: 4 } },
+                      React.createElement('span', { className: 'badge badge-log' }, ROLE_MAP[u.role] || u.role),
+                      isUserActive(u)
+                        ? React.createElement('span', { className: 'badge badge-resolved' }, '啟用')
+                        : React.createElement('span', { className: 'badge badge-open' }, '停用')
+                    )
+                  ),
+                  React.createElement('button', {
+                    className: 'btn btn-ghost',
+                    style: { fontSize: 13, padding: '7px 14px' },
+                    onClick: () => openEdit(u)
+                  }, '✏️ 編輯')
+                )
               )
+            ))
+          ),
+
+      // 新增帳號 Modal
+      showUserForm && React.createElement(Modal, { title: '新增帳號', onClose: () => setShowUserForm(false),
+        footer: React.createElement(React.Fragment, null,
+          React.createElement('button', { className: 'btn btn-ghost', onClick: () => setShowUserForm(false) }, '取消'),
+          React.createElement('button', { className: 'btn btn-primary', onClick: createUser }, '新增')
+        )},
+        userMsg && React.createElement('div', { className: 'alert alert-error' }, userMsg),
+        ['name','email','password'].map(k => React.createElement('div', { key: k, className: 'form-group' },
+          React.createElement('label', null, k==='name'?'姓名':k==='email'?'Email':'密碼'),
+          React.createElement('input', { type: k==='password'?'password':'text', value: newUser[k], onChange: e => setNewUser(f => ({ ...f, [k]: e.target.value })) })
+        )),
+        React.createElement('div', { className: 'form-group' },
+          React.createElement('label', null, '角色'),
+          React.createElement('select', { value: newUser.role, onChange: e => setNewUser(f => ({ ...f, role: e.target.value })) },
+            Object.entries(ROLE_MAP).map(([k,v]) => React.createElement('option', { key: k, value: k }, v))
+          )
+        )
+      ),
+
+      // 編輯帳號 Modal
+      editUser && React.createElement(Modal, { title: '編輯帳號：' + editUser.name, onClose: () => setEditUser(null),
+        footer: React.createElement(React.Fragment, null,
+          React.createElement('button', { className: 'btn btn-ghost', onClick: () => setEditUser(null) }, '取消'),
+          React.createElement('button', { className: 'btn btn-primary', onClick: saveEditUser, disabled: editLoading },
+            editLoading ? '儲存中...' : '💾 儲存'
+          )
+        )},
+        editMsg && React.createElement('div', { className: 'alert alert-error' }, editMsg),
+        React.createElement('div', { className: 'form-group' },
+          React.createElement('label', null, '姓名 *'),
+          React.createElement('input', { value: editForm.name, onChange: e => setEditForm(f => ({ ...f, name: e.target.value })) })
+        ),
+        React.createElement('div', { className: 'form-group' },
+          React.createElement('label', null, 'Email *'),
+          React.createElement('input', { type: 'email', value: editForm.email, onChange: e => setEditForm(f => ({ ...f, email: e.target.value })) })
+        ),
+        React.createElement('div', { className: 'grid-2' },
+          React.createElement('div', { className: 'form-group' },
+            React.createElement('label', null, '角色'),
+            React.createElement('select', { value: editForm.role, onChange: e => setEditForm(f => ({ ...f, role: e.target.value })) },
+              Object.entries(ROLE_MAP).map(([k,v]) => React.createElement('option', { key: k, value: k }, v))
             )
           ),
-      showUserForm && React.createElement(Modal, { title: '新增帳號', onClose: () => setShowUserForm(false),
-        footer: React.createElement(React.Fragment, null, React.createElement('button', { className: 'btn btn-ghost', onClick: () => setShowUserForm(false) }, '取消'), React.createElement('button', { className: 'btn btn-primary', onClick: createUser }, '新增'))},
-        userMsg && React.createElement('div', { className: 'alert alert-error' }, userMsg),
-        ['name','email','password'].map(k => React.createElement('div', { key: k, className: 'form-group' }, React.createElement('label', null, k==='name'?'姓名':k==='email'?'Email':'密碼'), React.createElement('input', { type: k==='password'?'password':'text', value: newUser[k], onChange: e => setNewUser(f => ({ ...f, [k]: e.target.value })) }))),
-        React.createElement('div', { className: 'form-group' }, React.createElement('label', null, '角色'), React.createElement('select', { value: newUser.role, onChange: e => setNewUser(f => ({ ...f, role: e.target.value })) }, Object.entries(ROLE_MAP).map(([k,v]) => React.createElement('option', { key: k, value: k }, v))))
+          React.createElement('div', { className: 'form-group' },
+            React.createElement('label', null, '帳號狀態'),
+            React.createElement('select', { value: editForm.active ? 'true' : 'false', onChange: e => setEditForm(f => ({ ...f, active: e.target.value === 'true' })) },
+              React.createElement('option', { value: 'true' }, '啟用'),
+              React.createElement('option', { value: 'false' }, '停用')
+            )
+          )
+        ),
+        React.createElement('div', { className: 'divider' }),
+        React.createElement('p', { style: { fontSize: 13, color: 'var(--text-2)', marginBottom: 10 } }, '🔑 重設密碼（留空則不修改）'),
+        React.createElement('div', { className: 'form-group' },
+          React.createElement('label', null, '新密碼'),
+          React.createElement('input', { type: 'password', value: editForm.password, onChange: e => setEditForm(f => ({ ...f, password: e.target.value })), placeholder: '輸入新密碼，留空則不變更' })
+        )
       )
     ),
     tab === 'classes' && React.createElement('div', null,
