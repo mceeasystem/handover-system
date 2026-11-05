@@ -272,7 +272,7 @@ function Login({ onLogin }) {
       React.createElement('div', { className: 'login-logo' },
         React.createElement('div', { className: 'login-icon' }, '🏫'),
         React.createElement('h1', null, '多元職能推廣協會資訊系統'),
-        React.createElement('p', null, 'MCEEA information system')
+        React.createElement('p', null, 'MCEEA Information System')
       ),
       !showForgot
         ? React.createElement('div', null,
@@ -525,10 +525,18 @@ function RecordsPage({ user, classes, classrooms }) {
         React.createElement('option', { value: '' }, '所有類型'),
         Object.entries(TYPE_MAP).map(([k,v]) => React.createElement('option', { key: k, value: k }, v.label))
       ),
-      React.createElement('input', { type: 'date', value: filter.date_from, onChange: e => setFilter(f => ({ ...f, date_from: e.target.value })), title: '記錄起始日' }),
-      React.createElement('input', { type: 'date', value: filter.date_to, onChange: e => setFilter(f => ({ ...f, date_to: e.target.value })), title: '記錄結束日' }),
-      React.createElement('input', { type: 'date', value: filter.execute_from, onChange: e => setFilter(f => ({ ...f, execute_from: e.target.value })), title: '執行日期起' }),
-      React.createElement('input', { type: 'date', value: filter.execute_to, onChange: e => setFilter(f => ({ ...f, execute_to: e.target.value })), title: '執行日期迄' }),
+      React.createElement('div', { style: { width: '100%', display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' } },
+        React.createElement('span', { style: { fontSize: 13, fontWeight: 700, color: 'var(--text-2)', minWidth: 64 } }, '記錄日期'),
+        React.createElement('input', { type: 'date', value: filter.date_from, onChange: e => setFilter(f => ({ ...f, date_from: e.target.value })), title: '記錄日期（起）', style: { flex: 1, minWidth: 130 } }),
+        React.createElement('span', { className: 'text-muted' }, '至'),
+        React.createElement('input', { type: 'date', value: filter.date_to, onChange: e => setFilter(f => ({ ...f, date_to: e.target.value })), title: '記錄日期（迄）', style: { flex: 1, minWidth: 130 } })
+      ),
+      React.createElement('div', { style: { width: '100%', display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' } },
+        React.createElement('span', { style: { fontSize: 13, fontWeight: 700, color: 'var(--text-2)', minWidth: 64 } }, '執行日期'),
+        React.createElement('input', { type: 'date', value: filter.execute_from, onChange: e => setFilter(f => ({ ...f, execute_from: e.target.value })), title: '執行日期（起）', style: { flex: 1, minWidth: 130 } }),
+        React.createElement('span', { className: 'text-muted' }, '至'),
+        React.createElement('input', { type: 'date', value: filter.execute_to, onChange: e => setFilter(f => ({ ...f, execute_to: e.target.value })), title: '執行日期（迄）', style: { flex: 1, minWidth: 130 } })
+      ),
       React.createElement('button', { className: 'btn btn-ghost', style: { fontSize: 13 }, onClick: load }, '🔍 查詢')
     ),
     loading
@@ -1323,28 +1331,88 @@ function AdminPage({ classes, classrooms, onRefresh, isAdmin }) {
 
 // ===== DASHBOARD =====
 function Dashboard({ user, classes, classrooms }) {
-  const [stats, setStats] = useState({ total: 0, open: 0, equipment: 0, resolved: 0 });
-  useEffect(() => {
-    api('getRecords', { date_from: '2000-01-01' }).then(r => {
-      if (r.success && r.data) {
-        const d = r.data;
-        setStats({ total: d.length, open: d.filter(x => x.status!=='resolved'&&x.type!=='log').length, equipment: d.filter(x=>x.type==='equipment').length, resolved: d.filter(x=>x.status==='resolved').length });
-      }
-    });
+  const [records, setRecords] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState('open');
+  const [detail, setDetail] = useState(null);
+  const [resolving, setResolving] = useState(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    const r = await api('getRecords', { date_from: '2000-01-01' });
+    setLoading(false);
+    if (r.success && r.data) setRecords(r.data);
   }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const groups = {
+    all:       records,
+    open:      records.filter(x => x.status !== 'resolved' && x.type !== 'log'),
+    equipment: records.filter(x => x.type === 'equipment'),
+    resolved:  records.filter(x => x.status === 'resolved'),
+  };
+  const statDefs = [
+    { key: 'all',       label: '總記錄數', color: '#1e40af' },
+    { key: 'open',      label: '待處理',   color: '#d97706' },
+    { key: 'equipment', label: '設備異常', color: '#0891b2' },
+    { key: 'resolved',  label: '已解決',   color: '#16a34a' },
+  ];
+  const listTitle = { all: '全部交接事項', open: '待處理交接事項', equipment: '設備異常交接事項', resolved: '已解決交接事項' };
+  const list = groups[selected] || [];
+
+  function renderCard(r) {
+    const t = TYPE_MAP[r.type] || {};
+    const cls  = classes.find(c => c.id === r.class_id);
+    const room = classrooms.find(c => c.id === r.classroom_id);
+    const needResolve = r.type !== 'log';
+    return React.createElement('div', { key: r.id, className: 'record-card ' + (r.status === 'resolved' ? 'resolved' : ''), onClick: () => setDetail(r) },
+      React.createElement('div', { className: 'record-top' },
+        React.createElement('span', { className: 'record-title' }, r.description),
+        needResolve && React.createElement('span', { className: 'badge ' + (r.status === 'resolved' ? 'badge-resolved' : 'badge-open') }, r.status === 'resolved' ? '✓ 已解決' : '處理中')
+      ),
+      React.createElement('div', { className: 'record-meta' },
+        React.createElement('span', { className: 'badge ' + t.badge }, (t.icon || '') + ' ' + (t.label || r.type)),
+        cls  && React.createElement('span', { className: 'badge badge-log' }, cls.name),
+        room && React.createElement('span', { className: 'badge badge-log' }, room.name),
+        r.type === 'task' && r.execute_date && React.createElement('span', { className: 'badge', style: { background: '#fef3c7', color: '#92400e' } }, '執行：' + String(r.execute_date).substring(0, 10))
+      ),
+      React.createElement('div', { className: 'record-footer' },
+        React.createElement('span', { className: 'record-time' }, r.date),
+        React.createElement('span', { className: 'record-time' }, fmtDate(r.created_at))
+      )
+    );
+  }
+
   return React.createElement('div', null,
     React.createElement('div', { className: 'stats-grid' },
-      [{ label:'總記錄數', value:stats.total, color:'#1e40af' }, { label:'待處理', value:stats.open, color:'#d97706' }, { label:'設備異常', value:stats.equipment, color:'#0891b2' }, { label:'已解決', value:stats.resolved, color:'#16a34a' }].map(s =>
-        React.createElement('div', { key: s.label, className: 'stat-card' }, React.createElement('div', { className: 'stat-value', style: { color: s.color } }, s.value), React.createElement('div', { className: 'stat-label' }, s.label))
-      )
+      statDefs.map(s => React.createElement('div', {
+        key: s.key,
+        className: 'stat-card',
+        onClick: () => setSelected(s.key),
+        style: {
+          cursor: 'pointer',
+          borderColor: selected === s.key ? s.color : undefined,
+          borderWidth: selected === s.key ? 2 : 1,
+          background: selected === s.key ? s.color + '12' : undefined,
+          transition: 'all .15s'
+        }
+      },
+        React.createElement('div', { className: 'stat-value', style: { color: s.color } }, loading ? '…' : groups[s.key].length),
+        React.createElement('div', { className: 'stat-label' }, s.label)
+      ))
     ),
-    React.createElement('div', { className: 'card' },
-      React.createElement('div', { className: 'card-header' }, React.createElement('span', { className: 'card-title' }, '歡迎回來，' + user.name + (user.role==='supervisor'?' 👑':''))),
-      React.createElement('div', { className: 'card-body' },
-        React.createElement('p', { className: 'text-sm text-muted' }, '角色：', ROLE_MAP[user.role]||user.role),
-        React.createElement('p', { className: 'text-sm text-muted mt-2' }, '目前系統有 ', React.createElement('strong', null, stats.open), ' 筆記錄待處理')
-      )
-    )
+    React.createElement('div', { className: 'flex justify-between items-center', style: { marginBottom: 10 } },
+      React.createElement('span', { style: { fontSize: 15, fontWeight: 700 } }, listTitle[selected] + (loading ? '' : '（' + list.length + '）')),
+      React.createElement('button', { className: 'btn btn-ghost', style: { fontSize: 12, padding: '5px 10px' }, onClick: load }, '🔄 重新整理')
+    ),
+    loading
+      ? React.createElement('div', { className: 'loading' }, React.createElement('span', { className: 'spinner' }), '載入中...')
+      : list.length === 0
+      ? React.createElement('div', { className: 'empty' }, React.createElement('div', { className: 'empty-icon' }, '📭'), React.createElement('p', null, '此類別目前沒有交接事項'))
+      : React.createElement('div', { className: 'record-list' }, list.map(renderCard)),
+    detail && !resolving && React.createElement(RecordDetail, { record: detail, classes, classrooms, user, onClose: () => setDetail(null), onResolve: () => setResolving(detail) }),
+    resolving && React.createElement(ResolveModal, { record: resolving, user, onClose: () => setResolving(null), onSubmit: () => { setResolving(null); setDetail(null); load(); } })
   );
 }
 
@@ -1406,7 +1474,7 @@ function App() {
     React.createElement('div', { className: 'sidebar' },
       React.createElement('div', { className: 'sidebar-header' },
         React.createElement('h2', null, '🏫 多元職能推廣協會'),
-        React.createElement('p', null, '交接系統')
+        React.createElement('p', null, '資訊系統')
       ),
       React.createElement('nav', { className: 'sidebar-nav' },
         navItems.filter(n => n.show && n.key !== 'logout').map(n =>
