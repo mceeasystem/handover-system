@@ -423,6 +423,14 @@ function ResolveModal({ record, user, onSubmit, onClose }) {
 }
 
 // ===== RECORD DETAIL =====
+function personLine(r) {
+  const parts = [];
+  if (r.creator_name) parts.push('填報：' + r.creator_name);
+  if (r.status === 'resolved' && r.resolver_name) parts.push('解決：' + r.resolver_name);
+  if (parts.length === 0) return null;
+  return React.createElement('div', { className: 'record-time', style: { marginTop: 6 } }, parts.join('　｜　'));
+}
+
 function RecordDetail({ record, classes, classrooms, user, onResolve, onClose }) {
   const t = TYPE_MAP[record.type] || {};
   const cls  = classes.find(c => c.id === record.class_id);
@@ -446,11 +454,13 @@ function RecordDetail({ record, classes, classrooms, user, onResolve, onClose })
       React.createElement('div', null, React.createElement('span', { className: 'text-muted' }, '教室：'), room?.name || '-'),
       React.createElement('div', null, React.createElement('span', { className: 'text-muted' }, '記錄日期：'), record.date),
       record.type === 'task' && record.execute_date && React.createElement('div', null, React.createElement('span', { className: 'text-muted' }, '執行日期：'), record.execute_date),
+      React.createElement('div', null, React.createElement('span', { className: 'text-muted' }, '填報人：'), record.creator_name || '-'),
       React.createElement('div', null, React.createElement('span', { className: 'text-muted' }, '建立時間：'), fmtDate(record.created_at))
     ),
     record.status === 'resolved' && React.createElement('div', { className: 'resolve-box', style: { marginTop: 14 } },
       React.createElement('p', { style: { fontSize: 13, fontWeight: 700, color: 'var(--success)', marginBottom: 6 } }, '✓ 已解決'),
       record.resolve_note && React.createElement('div', { className: 'text-sm' }, '解決方式：', record.resolve_note),
+      React.createElement('div', { className: 'text-sm mt-2' }, React.createElement('span', { className: 'text-muted' }, '解決人：'), record.resolver_name || '-'),
       React.createElement('div', { className: 'text-sm text-muted mt-2' }, '解決時間：', fmtDate(record.resolved_at))
     )
   );
@@ -496,6 +506,7 @@ function RecordsPage({ user, classes, classrooms }) {
         room && React.createElement('span', { className: 'badge badge-log' }, room.name),
         r.type === 'task' && r.execute_date && React.createElement('span', { className: 'badge', style: { background: '#fef3c7', color: '#92400e' } }, '執行：' + r.execute_date)
       ),
+      personLine(r),
       React.createElement('div', { className: 'record-footer' },
         React.createElement('span', { className: 'record-time' }, r.date),
         React.createElement('span', { className: 'record-time' }, fmtDate(r.created_at))
@@ -727,7 +738,8 @@ function AnnouncePage({ user, classes }) {
 }
 
 // ===== CHECK RECORDS PAGE =====
-function CheckRecordsPage({ classrooms }) {
+function CheckRecordsPage({ classrooms, user }) {
+  const isManager = canManage(user.role);
   const [filter, setFilter] = useState({
     date_from: new Date(Date.now()-30*24*60*60*1000).toISOString().split('T')[0],
     date_to: new Date().toISOString().split('T')[0],
@@ -742,7 +754,7 @@ function CheckRecordsPage({ classrooms }) {
   async function fetchData() {
     if (!filter.date_from || !filter.date_to) { setMsg('請選擇日期區間'); return; }
     setLoading(true); setMsg(''); setRecords(null);
-    const res = await api('getCheckRecordsFull', filter);
+    const res = await api('getCheckRecordsFull', isManager ? filter : { ...filter, checked_by: user.id });
     setLoading(false);
     if (res.success) { setRecords(res.data || []); if ((res.data||[]).length === 0) setMsg('查無符合條件的記錄'); }
     else setMsg(res.message || '查詢失敗');
@@ -774,8 +786,9 @@ function CheckRecordsPage({ classrooms }) {
 
   return React.createElement('div', null,
     React.createElement('div', { className: 'card' },
-      React.createElement('div', { className: 'card-header' }, React.createElement('span', { className: 'card-title' }, '🏁 課前課後檢查紀錄')),
+      React.createElement('div', { className: 'card-header' }, React.createElement('span', { className: 'card-title' }, isManager ? '🏁 課前課後檢查紀錄' : '🏁 我的檢查紀錄')),
       React.createElement('div', { className: 'card-body' },
+        !isManager && React.createElement('div', { className: 'alert alert-info' }, '僅顯示您自己填報的課前課後檢查紀錄'),
         React.createElement('div', { className: 'form-group' },
           React.createElement('label', null, '日期區間 *'),
           React.createElement('div', { className: 'flex gap-2 items-center flex-wrap' },
@@ -806,7 +819,7 @@ function CheckRecordsPage({ classrooms }) {
           React.createElement('button', { className: 'btn btn-primary', onClick: fetchData, disabled: loading },
             loading ? React.createElement('span', null, React.createElement('span', { className: 'spinner' }), '查詢中...') : '🔍 查詢'
           ),
-          records && records.length > 0 && React.createElement('button', { className: 'btn btn-success', onClick: doExport, disabled: exportLoading },
+          isManager && records && records.length > 0 && React.createElement('button', { className: 'btn btn-success', onClick: doExport, disabled: exportLoading },
             exportLoading ? '匯出中...' : '⬇ 匯出 XLS（' + records.length + ' 筆）'
           )
         )
@@ -1377,6 +1390,7 @@ function Dashboard({ user, classes, classrooms }) {
         room && React.createElement('span', { className: 'badge badge-log' }, room.name),
         r.type === 'task' && r.execute_date && React.createElement('span', { className: 'badge', style: { background: '#fef3c7', color: '#92400e' } }, '執行：' + String(r.execute_date).substring(0, 10))
       ),
+      personLine(r),
       React.createElement('div', { className: 'record-footer' },
         React.createElement('span', { className: 'record-time' }, r.date),
         React.createElement('span', { className: 'record-time' }, fmtDate(r.created_at))
@@ -1456,13 +1470,13 @@ function App() {
     { key: 'records',   icon: '📋', label: '交接',     show: true },
     { key: 'check',     icon: '✅', label: '課前課後', show: true },
     { key: 'announce',  icon: '📢', label: '公告',     show: true },
-    { key: 'checkrec',   icon: '🏁', label: '檢查紀錄', show: canExport },
+    { key: 'checkrec',   icon: '🏁', label: '檢查紀錄', show: true },
     { key: 'export',    icon: '📊', label: '匯出',     show: canExport },
     { key: 'admin',     icon: '⚙️', label: '管理',     show: isSupervisorOrAdmin },
     { key: 'logout',    icon: '🚪', label: '登出',     show: true },
   ];
 
-  const titles = { dashboard:'總覽', records:'交接記錄', check:'課前課後檢查', announce:'推播公告', checkrec:'課前課後檢查紀錄', export:'匯出記錄', admin:'系統管理' };
+  const titles = { dashboard:'總覽', records:'交接記錄', check:'課前課後檢查', announce:'推播公告', checkrec: canExport ? '課前課後檢查紀錄' : '我的檢查紀錄', export:'匯出記錄', admin:'系統管理' };
 
   function handleNav(key) { if (key === 'logout') { setUser(null); return; } setPage(key); }
 
@@ -1510,7 +1524,7 @@ function App() {
         page === 'records'   && React.createElement(RecordsPage, { user, classes, classrooms }),
         page === 'check'     && React.createElement(CheckPage, { user, classrooms }),
         page === 'announce'  && React.createElement(AnnouncePage, { user, classes }),
-        page === 'checkrec'  && canExport && React.createElement(CheckRecordsPage, { classrooms }),
+        page === 'checkrec'  && React.createElement(CheckRecordsPage, { classrooms, user }),
         page === 'export'    && canExport && React.createElement(ExportPage, { classes }),
         page === 'admin'     && isSupervisorOrAdmin && React.createElement(AdminPage, { classes, classrooms, onRefresh: loadMeta, isAdmin })
       )
