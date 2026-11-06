@@ -271,8 +271,8 @@ function Login({ onLogin }) {
     React.createElement('div', { className: 'login-box' },
       React.createElement('div', { className: 'login-logo' },
         React.createElement('div', { className: 'login-icon' }, '🏫'),
-        React.createElement('h1', null, '多元職能推廣協會資訊系統 V7.0'),
-        React.createElement('p', null, 'MCEEA Information System V7.0')
+        React.createElement('h1', null, '多元職能推廣協會資訊系統V8.0'),
+        React.createElement('p', null, 'MCEEA Information System 8.0')
       ),
       !showForgot
         ? React.createElement('div', null,
@@ -571,6 +571,9 @@ function CheckPage({ user, classrooms }) {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [msg, setMsg] = useState('');
+  const [status, setStatus] = useState(null);
+  const [statusLoading, setStatusLoading] = useState(false);
+  const [checkDate, setCheckDate] = useState('');
 
   async function loadItems(id) {
     setRoomId(id); setSelections({}); setItems([]); setSubmitted(false); setMsg('');
@@ -581,20 +584,68 @@ function CheckPage({ user, classrooms }) {
     if (res.success) setItems(res.data || []);
   }
 
-  function selectPeriod(p) { setPeriod(p); setSubmitted(false); setSelections({}); setMsg(''); }
+  async function loadStatus() {
+    if (period !== 'after' || !roomId) { setStatus(null); return; }
+    setStatusLoading(true);
+    const res = await api('getAfterCheckStatus', { classroom_id: roomId });
+    setStatusLoading(false);
+    setStatus(res.success ? res : null);
+  }
+  useEffect(() => { loadStatus(); }, [period, roomId]);
+
+  function selectPeriod(p) { setPeriod(p); setSubmitted(false); setSelections({}); setMsg(''); setStatus(null); setCheckDate(''); }
   function select(itemId, status) { setSelections(s => ({ ...s, [itemId]: status })); }
   const allSelected = items.length > 0 && items.every(i => selections[i.id]);
   const periodLabel = period === 'before' ? '課前' : period === 'after' ? '課後' : '';
+
+  // 課後：可填寫的日期（今日開放中 + 主管已開啟的補填日）
+  const isAfter = period === 'after';
+  const w = status && status.window;
+  const fillOptions = [];
+  if (isAfter && status) {
+    if (w.state === 'open') fillOptions.push({ date: status.today, label: '今日 ' + status.today });
+    (status.unlocked || []).sort((a, b) => a.date.localeCompare(b.date)).forEach(u => {
+      if (!(u.date === status.today && w.state === 'open')) fillOptions.push({ date: u.date, label: u.date + '（主管已開啟補填）' });
+    });
+  }
+  const effDate = fillOptions.some(o => o.date === checkDate) ? checkDate : (fillOptions[0] ? fillOptions[0].date : '');
+  const blocked = isAfter && !!roomId && !statusLoading && (!status || fillOptions.length === 0);
 
   async function submit() {
     if (!period) { setMsg('請選擇課前或課後'); return; }
     if (!roomId) { setMsg('請選擇教室'); return; }
     if (!allSelected) { setMsg('請為所有項目選擇狀態'); return; }
+    if (isAfter && !effDate) { setMsg('目前不在可填寫的時段'); return; }
     setLoading(true); setMsg('');
-    const res = await api('submitCheckRecord', { classroom_id: roomId, checked_by: user.id, note, period, items: items.map(i => ({ item_id: i.id, item_name: i.item_name, status: selections[i.id] })) });
+    const payload = { classroom_id: roomId, checked_by: user.id, note, period, items: items.map(i => ({ item_id: i.id, item_name: i.item_name, status: selections[i.id] })) };
+    if (isAfter) payload.check_date = effDate;
+    const res = await api('submitCheckRecord', payload);
     setLoading(false);
     if (res.success) setSubmitted(true);
-    else setMsg('提交失敗，請重試');
+    else { setMsg(res.message || '提交失敗，請重試'); if (isAfter) loadStatus(); }
+  }
+
+  function statusBanner() {
+    if (!isAfter || !roomId) return null;
+    if (statusLoading && !status) return React.createElement('div', { className: 'loading' }, React.createElement('span', { className: 'spinner' }), '確認開放時段...');
+    if (!status) return React.createElement('div', { className: 'alert alert-error' }, '無法取得開放時段，請稍後按「重新整理」');
+    let tone, text;
+    if (w.state === 'open') { tone = 'alert-success'; text = '🟢 課後檢查開放中，請於 ' + w.deadline + ' 前完成'; }
+    else if (w.state === 'before_open') { tone = 'alert-info'; text = w.mode === 'weekday' ? '⏳ 尚未開放：今日預計 ' + w.dismiss_time + ' 下課，最早 ' + w.open_time + ' 可填寫' : '⏳ 尚未開放'; }
+    else { tone = 'alert-error'; text = '🔒 今日已逾期（' + w.deadline + ' 截止），需由主管至「管理 → 課後設定」開啟後才能填寫'; }
+    return React.createElement('div', null,
+      React.createElement('div', { className: 'alert ' + tone, style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 } },
+        React.createElement('span', null, text),
+        React.createElement('button', { className: 'btn btn-ghost', style: { fontSize: 12, padding: '4px 10px', flexShrink: 0 }, onClick: loadStatus, disabled: statusLoading }, statusLoading ? '...' : '↻ 重新整理')
+      ),
+      w.state === 'open' && status.today_filled && fillOptions.length > 0 && React.createElement('div', { className: 'alert alert-info' }, 'ℹ️ 此教室今日已有課後檢查紀錄，再次送出會新增一筆'),
+      fillOptions.length > 1 && React.createElement('div', { className: 'form-group' },
+        React.createElement('label', null, '填寫日期'),
+        React.createElement('select', { value: effDate, onChange: e => setCheckDate(e.target.value) },
+          fillOptions.map(o => React.createElement('option', { key: o.date, value: o.date }, o.label)))
+      ),
+      fillOptions.length === 1 && fillOptions[0].date !== status.today && React.createElement('div', { className: 'alert alert-info' }, '📝 補填 ' + fillOptions[0].date + ' 的課後檢查（主管已開啟）')
+    );
   }
 
   return React.createElement('div', null,
@@ -604,7 +655,7 @@ function CheckPage({ user, classrooms }) {
         submitted
           ? React.createElement('div', null,
               React.createElement('div', { className: 'alert alert-success', style: { textAlign: 'center', padding: 20 } }, '✓ ' + periodLabel + '檢查已完成提交！'),
-              React.createElement('button', { className: 'btn btn-ghost btn-full', style: { marginTop: 10 }, onClick: () => { setSubmitted(false); setSelections({}); setNote(''); setPeriod(''); } }, '繼續填寫下一份')
+              React.createElement('button', { className: 'btn btn-ghost btn-full', style: { marginTop: 10 }, onClick: () => { setSubmitted(false); setSelections({}); setNote(''); setPeriod(''); setStatus(null); } }, '繼續填寫下一份')
             )
           : React.createElement('div', null,
               React.createElement('div', { className: 'form-group' },
@@ -621,8 +672,9 @@ function CheckPage({ user, classrooms }) {
                   classrooms.map(c => React.createElement('option', { key: c.id, value: c.id }, c.name))
                 )
               ),
+              statusBanner(),
               loading && React.createElement('div', { className: 'loading' }, React.createElement('span', { className: 'spinner' }), '載入中...'),
-              items.length > 0 && React.createElement('div', null,
+              items.length > 0 && !blocked && !(isAfter && !status) && React.createElement('div', null,
                 period && React.createElement('div', { style: { background: period==='before'?'#dbeafe':'#dcfce7', color: period==='before'?'#1e40af':'#16a34a', borderRadius: 8, padding: '7px 12px', fontSize: 13, fontWeight: 700, marginBottom: 10 } }, period==='before'?'🌅 課前檢查模式':'🌇 課後檢查模式'),
                 React.createElement('div', { className: 'divider' }),
                 items.map(item => React.createElement('div', { key: item.id, className: 'check-item' },
@@ -637,6 +689,7 @@ function CheckPage({ user, classrooms }) {
                 msg && React.createElement('div', { className: 'alert alert-error' }, msg),
                 React.createElement('button', { className: 'btn btn-primary btn-full', onClick: submit, disabled: loading || !allSelected || !period }, loading ? '提交中...' : '提交' + periodLabel + '檢查')
               ),
+              blocked && msg && React.createElement('div', { className: 'alert alert-error' }, msg),
               roomId && !loading && items.length === 0 && React.createElement('div', { className: 'empty' }, React.createElement('div', { className: 'empty-icon' }, '📋'), React.createElement('p', null, '此教室尚未設定檢查項目'))
             )
       )
@@ -765,7 +818,7 @@ function CheckRecordsPage({ classrooms, user }) {
     const res = await api('exportCheckRecords', filter);
     setExportLoading(false);
     if (!res.success || !res.data) return;
-    const headers = ['檢查時間','時段','教室','執行者','檢查項目','狀態','備註'];
+    const headers = ['檢查時間','檢查日','時段','教室','執行者','檢查項目','狀態','備註'];
     const rows = res.data.map(r => headers.map(h => r[h] || ''));
     let html = '<html xmlns:o="urn:schemas-microsoft-com:office:office"><head><meta charset="UTF-8"></head><body><table>';
     html += '<tr>' + headers.map(h => '<th style="background:#1e40af;color:#fff;font-weight:bold;padding:6px;">' + h + '</th>').join('') + '</tr>';
@@ -849,6 +902,7 @@ function CheckRecordsPage({ classrooms, user }) {
           ),
           React.createElement('div', { className: 'record-footer' },
             React.createElement('span', { className: 'record-time' }, String(r.checked_at).substring(0, 16)),
+            r.check_date && String(r.checked_at).substring(0, 10) !== r.check_date && React.createElement('span', { className: 'badge badge-open' }, '補填 ' + r.check_date),
             r.note && React.createElement('span', { className: 'record-time' }, '備註：' + r.note)
           )
         );
@@ -960,7 +1014,127 @@ function ExportPage({ classes }) {
 }
 
 // ===== ADMIN PAGE =====
-function AdminPage({ classes, classrooms, onRefresh, isAdmin }) {
+// ===== 課後設定（下課時間 / 逾期補填 / 提醒）=====
+function CheckSettingsPanel({ user, isAdmin }) {
+  const [cfg, setCfg] = useState(null);
+  const [overview, setOverview] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [msg, setMsg] = useState({ type: '', text: '' });
+  const [busy, setBusy] = useState('');
+  const [todayTime, setTodayTime] = useState('');
+  const [defTime, setDefTime] = useState('');
+  const [batch, setBatch] = useState({ from: '', to: '', time: '16:40' });
+  const WD = ['日','一','二','三','四','五','六'];
+
+  async function load() {
+    setLoading(true);
+    const [c, o] = await Promise.all([
+      api('getDismissSettings', { user_id: user.id }),
+      api('getAfterCheckOverview', { user_id: user.id, days: 7 })
+    ]);
+    setLoading(false);
+    if (c.success) { setCfg(c); setTodayTime(c.today_time); setDefTime(c.default_time); setBatch(b => ({ ...b, from: b.from || c.today, to: b.to || c.today, time: c.default_time })); }
+    else setMsg({ type: 'error', text: c.message || '載入失敗' });
+    if (o.success) setOverview(o.data || []);
+  }
+  useEffect(() => { load(); }, []);
+
+  function note(type, text) { setMsg({ type, text }); }
+  async function run(key, action, payload, okText) {
+    setBusy(key); setMsg({ type: '', text: '' });
+    const res = await api(action, { user_id: user.id, ...payload });
+    setBusy('');
+    if (res.success) { note('success', typeof okText === 'function' ? okText(res) : okText); await load(); }
+    else note('error', res.message || '操作失敗');
+  }
+
+  if (loading && !cfg) return React.createElement('div', { className: 'loading' }, React.createElement('span', { className: 'spinner' }), '載入中...');
+  if (!cfg) return React.createElement('div', null, msg.text && React.createElement('div', { className: 'alert alert-error' }, msg.text), React.createElement('button', { className: 'btn btn-ghost', onClick: load }, '重試'));
+
+  const overdue = overview.filter(d => d.state === 'overdue' && d.classrooms.some(c => !c.filled));
+  const card = (title, body) => React.createElement('div', { className: 'card', style: { marginBottom: 14 } },
+    React.createElement('div', { className: 'card-header' }, React.createElement('span', { className: 'card-title' }, title)),
+    React.createElement('div', { className: 'card-body' }, body));
+
+  return React.createElement('div', null,
+    msg.text && React.createElement('div', { className: 'alert ' + (msg.type === 'success' ? 'alert-success' : 'alert-error') }, msg.text),
+    React.createElement('div', { className: 'alert alert-info' },
+      `週一至週四：下課前 ${cfg.lead_minutes} 分鐘起可填課後檢查；週五與假日全天開放；當日 ${cfg.deadline} 截止，逾期需主管開啟。`),
+
+    card('🕓 今日下課時間（' + cfg.today + '）',
+      React.createElement('div', null,
+        React.createElement('div', { className: 'flex gap-2 items-center' },
+          React.createElement('input', { type: 'time', value: todayTime, onChange: e => setTodayTime(e.target.value), style: { flex: 1 } }),
+          React.createElement('button', { className: 'btn btn-primary', disabled: busy === 'today' || !todayTime, onClick: () => run('today', 'setDismissTime', { time: todayTime }, '已更新今日下課時間') }, busy === 'today' ? '儲存中...' : '儲存')
+        ),
+        React.createElement('p', { className: 'text-sm text-muted', style: { marginTop: 8 } }, '預設為 ' + cfg.default_time + '；主管僅能調整當日，其他日期請由系統管理員設定。')
+      )),
+
+    card('🔓 逾期未填（近 7 天）',
+      overdue.length === 0
+        ? React.createElement('div', { className: 'text-sm text-muted' }, '近 7 天沒有逾期未填的教室 🎉')
+        : React.createElement('div', null,
+            React.createElement('p', { className: 'text-sm text-muted', style: { marginBottom: 8 } }, '「開啟」後，助教即可補填該日該教室的課後檢查（補填一次後自動關閉）。'),
+            overdue.map(d => {
+              const missing = d.classrooms.filter(c => !c.filled);
+              const toOpen = missing.filter(c => !c.unlocked);
+              return React.createElement('div', { key: d.date, style: { borderTop: '1px solid var(--border)', paddingTop: 10, marginTop: 10 } },
+                React.createElement('div', { className: 'flex justify-between items-center', style: { marginBottom: 6 } },
+                  React.createElement('strong', null, d.date + '（週' + d.weekday + '）'),
+                  toOpen.length > 1 && React.createElement('button', { className: 'btn btn-ghost', style: { fontSize: 12, padding: '4px 10px' }, disabled: busy === 'all' + d.date,
+                    onClick: () => run('all' + d.date, 'unlockAfterCheck', { date: d.date, classroom_ids: toOpen.map(c => c.id) }, r => `已開啟 ${r.count} 間教室`) }, '全部開啟')
+                ),
+                missing.map(c => React.createElement('div', { key: c.id, className: 'flex justify-between items-center', style: { padding: '5px 0' } },
+                  React.createElement('span', null, c.name),
+                  c.unlocked
+                    ? React.createElement('span', { className: 'badge badge-resolved' }, '已開啟，待填')
+                    : React.createElement('button', { className: 'btn btn-primary', style: { fontSize: 12, padding: '4px 12px' }, disabled: busy === d.date + c.id,
+                        onClick: () => run(d.date + c.id, 'unlockAfterCheck', { date: d.date, classroom_id: c.id }, `已開啟 ${c.name}（${d.date}）`) }, '開啟')
+                ))
+              );
+            })
+      )),
+
+    isAdmin && card('⚙️ 系統管理員設定',
+      React.createElement('div', null,
+        React.createElement('div', { className: 'form-group' },
+          React.createElement('label', null, '預設下課時間'),
+          React.createElement('div', { className: 'flex gap-2 items-center' },
+            React.createElement('input', { type: 'time', value: defTime, onChange: e => setDefTime(e.target.value), style: { flex: 1 } }),
+            React.createElement('button', { className: 'btn btn-primary', disabled: busy === 'def' || !defTime, onClick: () => run('def', 'saveCheckSettings', { default_time: defTime }, '已更新預設下課時間') }, '儲存')
+          )
+        ),
+        React.createElement('div', { className: 'divider' }),
+        React.createElement('div', { className: 'form-group' },
+          React.createElement('label', null, '批次調整下課時間（僅套用週一至週四）'),
+          React.createElement('div', { className: 'flex gap-2 items-center flex-wrap' },
+            React.createElement('input', { type: 'date', value: batch.from, onChange: e => setBatch(b => ({ ...b, from: e.target.value })), style: { flex: 1, minWidth: 130 } }),
+            React.createElement('span', null, '至'),
+            React.createElement('input', { type: 'date', value: batch.to, onChange: e => setBatch(b => ({ ...b, to: e.target.value })), style: { flex: 1, minWidth: 130 } })
+          ),
+          React.createElement('div', { className: 'flex gap-2 items-center', style: { marginTop: 8 } },
+            React.createElement('input', { type: 'time', value: batch.time, onChange: e => setBatch(b => ({ ...b, time: e.target.value })), style: { flex: 1 } }),
+            React.createElement('button', { className: 'btn btn-primary', disabled: busy === 'batch' || !batch.from || !batch.to || !batch.time,
+              onClick: () => run('batch', 'batchSetDismissTime', { date_from: batch.from, date_to: batch.to, time: batch.time }, r => `已調整 ${r.count} 天的下課時間`) }, busy === 'batch' ? '儲存中...' : '套用')
+          )
+        ),
+        cfg.upcoming.length > 0 && React.createElement('div', { className: 'text-sm', style: { marginBottom: 10 } },
+          React.createElement('div', { className: 'text-muted', style: { marginBottom: 4 } }, '已個別設定的日期：'),
+          cfg.upcoming.slice(0, 14).map(u => React.createElement('div', { key: u.date }, `${u.date}（週${WD[u.weekday]}）　${u.time}`)),
+          cfg.upcoming.length > 14 && React.createElement('div', { className: 'text-muted' }, `…另有 ${cfg.upcoming.length - 14} 天`)
+        ),
+        React.createElement('div', { className: 'divider' }),
+        React.createElement('label', { className: 'flex gap-2 items-center', style: { cursor: 'pointer' } },
+          React.createElement('input', { type: 'checkbox', checked: cfg.reminder_enabled, disabled: busy === 'rem', style: { width: 'auto' },
+            onChange: e => run('rem', 'saveCheckSettings', { reminder_enabled: e.target.checked }, e.target.checked ? '已啟用隔日提醒' : '已關閉隔日提醒') }),
+          React.createElement('span', null, `隔日 ${cfg.reminder_time} 起，若有教室未填報課後檢查，登入時自動發佈公告提醒`)
+        )
+      )),
+    React.createElement('button', { className: 'btn btn-ghost btn-full', onClick: load, disabled: loading }, loading ? '更新中...' : '🔄 重新整理')
+  );
+}
+
+function AdminPage({ classes, classrooms, onRefresh, isAdmin, user }) {
   const [tab, setTab] = useState(isAdmin ? 'users' : 'classes');
   const [users, setUsers] = useState([]);
   const [usersLoading, setUsersLoading] = useState(false);
@@ -1068,7 +1242,7 @@ function AdminPage({ classes, classrooms, onRefresh, isAdmin }) {
 
   return React.createElement('div', null,
     React.createElement('div', { className: 'tabs', style: { marginBottom: 14 } },
-      (isAdmin ? [['users','帳號'],['classes','班級'],['classrooms','教室'],['checkitems','檢查項目']] : [['classes','班級'],['classrooms','教室'],['checkitems','檢查項目']]).map(([k,l]) =>
+      (isAdmin ? [['users','帳號'],['classes','班級'],['classrooms','教室'],['checkitems','檢查項目'],['checkcfg','課後設定']] : [['classes','班級'],['classrooms','教室'],['checkitems','檢查項目'],['checkcfg','課後設定']]).map(([k,l]) =>
         React.createElement('button', { key: k, className: `tab ${tab===k?'active':''}`, onClick: () => setTab(k) }, l)
       )
     ),
@@ -1309,6 +1483,8 @@ function AdminPage({ classes, classrooms, onRefresh, isAdmin }) {
       )
     ),
 
+    tab === 'checkcfg' && React.createElement(CheckSettingsPanel, { user, isAdmin }),
+
     tab === 'checkitems' && React.createElement('div', null,
       React.createElement('div', { className: 'flex justify-between items-center', style: { marginBottom: 10 } },
         React.createElement('span', { className: 'text-sm text-muted' }, '為各教室批次新增課前課後檢查項目'),
@@ -1446,7 +1622,7 @@ function App() {
   }
 
   async function checkAnnouncements(u) {
-    const res = await api('getAnnouncements', {});
+    const res = await api('getAnnouncements', { run_reminder: true });
     if (res.success && res.data) {
       const pending = res.data.filter(a => {
         const c = (a.confirms||[]).find(c => c.user_id === u.id);
@@ -1526,7 +1702,7 @@ function App() {
         page === 'announce'  && React.createElement(AnnouncePage, { user, classes }),
         page === 'checkrec'  && React.createElement(CheckRecordsPage, { classrooms, user }),
         page === 'export'    && canExport && React.createElement(ExportPage, { classes }),
-        page === 'admin'     && isSupervisorOrAdmin && React.createElement(AdminPage, { classes, classrooms, onRefresh: loadMeta, isAdmin })
+        page === 'admin'     && isSupervisorOrAdmin && React.createElement(AdminPage, { classes, classrooms, onRefresh: loadMeta, isAdmin, user })
       )
     ),
     React.createElement('nav', { className: 'bottom-nav' },
