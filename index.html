@@ -180,11 +180,13 @@ function todayTPE(offsetDays = 0) {
   const d = new Date(Date.now() + offsetDays * 86400000);
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
 }
-function fmtDate(s) {
+function fmtDate(s) {   // 時間戳記 → 年-月-日 時:分（台北時間）
   if (!s) return '';
   const str = String(s);
   const d = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(str) ? new Date(str.substring(0, 19).replace(' ', 'T') + '+08:00') : new Date(str);
-  return isNaN(d) ? s : d.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+  if (isNaN(d)) return str;
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Taipei', hour12: false, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).formatToParts(d).map(x => [x.type, x.value]));
+  return p.year + '-' + p.month + '-' + p.day + ' ' + (p.hour === '24' ? '00' : p.hour) + ':' + p.minute;
 }
 
 function canManage(role) { return role === 'admin' || role === 'supervisor'; }
@@ -276,7 +278,7 @@ function Login({ onLogin }) {
     React.createElement('div', { className: 'login-box' },
       React.createElement('div', { className: 'login-logo' },
         React.createElement('div', { className: 'login-icon' }, '🏫'),
-        React.createElement('h1', null, '多元職能推廣協會資訊系統'),
+        React.createElement('h1', null, '多元職能推廣協會資訊系統V9.4.3'),
         React.createElement('p', null, 'MCEEA Information System')
       ),
       !showForgot
@@ -906,8 +908,8 @@ function CheckRecordsPage({ classrooms, user }) {
             React.createElement('span', { className: 'badge badge-log' }, r.checker_name)
           ),
           React.createElement('div', { className: 'record-footer' },
-            React.createElement('span', { className: 'record-time' }, String(r.checked_at).substring(0, 16)),
-            r.check_date && String(r.checked_at).substring(0, 10) !== r.check_date && React.createElement('span', { className: 'badge badge-open' }, '補填 ' + r.check_date),
+            React.createElement('span', { className: 'record-time' }, fmtDate(r.checked_at)),
+            r.check_date && fmtDate(r.checked_at).substring(0, 10) !== r.check_date && React.createElement('span', { className: 'badge badge-open' }, '補填 ' + r.check_date),
             r.note && React.createElement('span', { className: 'record-time' }, '備註：' + r.note)
           )
         );
@@ -924,7 +926,7 @@ function CheckRecordsPage({ classrooms, user }) {
           React.createElement('div', { className: 'flex gap-2 flex-wrap items-center', style: { marginBottom: 12 } },
             React.createElement('span', { style: { background: detail.period==='before'?'#dbeafe':'#dcfce7', color: detail.period==='before'?'#1e40af':'#16a34a', fontSize: 12, fontWeight: 700, padding: '3px 8px', borderRadius: 20 } }, periodLabel(detail.period)),
             React.createElement('span', { className: 'text-sm text-muted' }, '執行者：' + (detail.checker_name || '-')),
-            React.createElement('span', { className: 'text-sm text-muted' }, String(detail.checked_at).substring(0, 16))
+            React.createElement('span', { className: 'text-sm text-muted' }, fmtDate(detail.checked_at))
           ),
           detail.note && React.createElement('div', { className: 'alert alert-info', style: { marginBottom: 12 } }, '備註：' + detail.note),
           React.createElement('div', { className: 'divider' }),
