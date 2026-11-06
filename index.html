@@ -176,10 +176,15 @@ const TYPE_MAP = {
 };
 const ROLE_MAP = { admin: '系統管理員', supervisor: '主管', assistant: '助教', maintenance: '維護人員' };
 
+function todayTPE(offsetDays = 0) {
+  const d = new Date(Date.now() + offsetDays * 86400000);
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
+}
 function fmtDate(s) {
   if (!s) return '';
-  const d = new Date(s);
-  return isNaN(d) ? s : d.toLocaleString('zh-TW', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+  const str = String(s);
+  const d = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(str) ? new Date(str.substring(0, 19).replace(' ', 'T') + '+08:00') : new Date(str);
+  return isNaN(d) ? s : d.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
 }
 
 function canManage(role) { return role === 'admin' || role === 'supervisor'; }
@@ -271,8 +276,8 @@ function Login({ onLogin }) {
     React.createElement('div', { className: 'login-box' },
       React.createElement('div', { className: 'login-logo' },
         React.createElement('div', { className: 'login-icon' }, '🏫'),
-        React.createElement('h1', null, '多元職能推廣協會資訊系統V9.3.1'),
-        React.createElement('p', null, 'MCEEA Information SystemV9.3.1')
+        React.createElement('h1', null, '多元職能推廣協會資訊系統'),
+        React.createElement('p', null, 'MCEEA Information System')
       ),
       !showForgot
         ? React.createElement('div', null,
@@ -341,7 +346,7 @@ function Modal({ title, onClose, children, footer }) {
 
 // ===== RECORD FORM =====
 function RecordForm({ classes, classrooms, user, onSubmit, onClose }) {
-  const [form, setForm] = useState({ type: 'abnormal', class_id: '', classroom_id: '', date: new Date().toISOString().split('T')[0], execute_date: '', description: '', notify_target: '' });
+  const [form, setForm] = useState({ type: 'abnormal', class_id: '', classroom_id: '', date: todayTPE(), execute_date: '', description: '', notify_target: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
@@ -794,8 +799,8 @@ function AnnouncePage({ user, classes }) {
 function CheckRecordsPage({ classrooms, user }) {
   const isManager = canManage(user.role);
   const [filter, setFilter] = useState({
-    date_from: new Date(Date.now()-30*24*60*60*1000).toISOString().split('T')[0],
-    date_to: new Date().toISOString().split('T')[0],
+    date_from: todayTPE(-30),
+    date_to: todayTPE(),
     classroom_id: '', period: ''
   });
   const [loading, setLoading] = useState(false);
@@ -948,7 +953,7 @@ function CheckRecordsPage({ classrooms, user }) {
 
 // ===== EXPORT PAGE =====
 function ExportPage({ classes }) {
-  const [filter, setFilter] = useState({ date_from: new Date(Date.now()-30*24*60*60*1000).toISOString().split('T')[0], date_to: new Date().toISOString().split('T')[0], class_id: '', type: '' });
+  const [filter, setFilter] = useState({ date_from: todayTPE(-30), date_to: todayTPE(), class_id: '', type: '' });
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState(null);
   const [msg, setMsg] = useState('');
